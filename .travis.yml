@@ -23,7 +23,7 @@ deploy:
     tags: true
 install:
 - pip install -U tox
-- pip install -r requirements.txt --use-mirrors
+- pip install -U -r requirements.txt --use-mirrors
 language: python
 python:
 - TOXENV=py34
