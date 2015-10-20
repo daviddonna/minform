@@ -22,13 +22,7 @@ deploy:
     repo: daviddonna/minform
     tags: true
 install:
-- pip install -U tox
+- pip install -U tox --use-mirrors
 - pip install -U -r requirements.txt --use-mirrors
 language: python
-python:
-- TOXENV=py34
-- TOXENV=py33
-- TOXENV=py27
-- TOXENV=py26
-- TOXENV=pypy
 script: tox
