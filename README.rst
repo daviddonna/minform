@@ -1,5 +1,8 @@
-Minform
-=======
+This page is a placeholder!
+===========================
+
+**The Minform package has not yet been released to PyPI, and is not yet fully
+documented. Come back in a little while!**
 
 .. image:: https://img.shields.io/travis/daviddonna/minform.svg
    :target: https://travis-ci.org/daviddonna/minform
