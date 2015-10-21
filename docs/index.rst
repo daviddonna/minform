@@ -3,20 +3,20 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to minform's documentation!
+Welcome to Minform's documentation!
 ======================================
+
+This package is available on github, at https://github.com/daviddonna/minform.
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
 
-   readme
    installation
    usage
    contributing
    authors
-   history
 
 Indices and tables
 ==================
