@@ -21,13 +21,13 @@ class BinaryFieldList(core.BinaryField):
         self.length = length
         self.order = order
 
-        data_byte_width = inner_field.byte_width * max_entries
+        data_size = inner_field.size * max_entries
         if length == core.FIXED:
-            self.byte_width = data_byte_width
+            self.size = data_size
         else:
             self.count_field = basic.store_numbers_up_to(max_entries,
                                                          order=order)
-            self.byte_width = self.count_field.byte_width + data_byte_width
+            self.size = self.count_field.size + data_size
             kwargs['default'] = []
 
         self.inner_field = inner_field
@@ -39,17 +39,17 @@ class BinaryFieldList(core.BinaryField):
 
     def pack(self, data, order=None):
         order = order or self.order
-        buf = bytearray(self.byte_width)
+        buf = bytearray(self.size)
 
         if self.length == core.VARIABLE:
             packed_count = self.count_field.pack(len(data))
-            buf[0:self.count_field.byte_width] = packed_count
-            start = self.count_field.byte_width
+            buf[0:self.count_field.size] = packed_count
+            start = self.count_field.size
         else:
             start = 0
 
         for item in data:
-            stop = start + self.inner_field.byte_width
+            stop = start + self.inner_field.size
             buf[start:stop] = self.inner_field.pack(item, order)
             start = stop
 
@@ -60,18 +60,18 @@ class BinaryFieldList(core.BinaryField):
         data = []
 
         if self.length == core.VARIABLE:
-            count_chunk = buf[0:self.count_field.byte_width]
+            count_chunk = buf[0:self.count_field.size]
             data_length = self.count_field.unpack(count_chunk)
             if data_length > self.max_entries:
                 raise ValueError("Unreasonable count of {0} for {1}".format(
                     data_length, self.name))
-            start = self.count_field.byte_width
+            start = self.count_field.size
         else:
             data_length = self.max_entries
             start = 0
 
         for i in range(data_length):
-            stop = start + self.inner_field.byte_width
+            stop = start + self.inner_field.size
             chunk = buf[start:stop]
             data.append(self.inner_field.unpack(chunk, order))
             start = stop
@@ -92,7 +92,7 @@ class BinaryFormField(core.BinaryField):
         self.form_class = form_class
         self.form_field = wtforms.FormField(form_class, label, validators,
                                             **kwargs)
-        self.byte_width = form_class.byte_width
+        self.size = form_class.size
 
     def pack(self, data, order=None):
         order = order or self.order

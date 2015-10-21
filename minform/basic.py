@@ -22,7 +22,7 @@ class BasicBinaryField(core.BinaryField):
 
     def __init__(self, label='', validators=None, order=None, **kwargs):
         core.BinaryItem.__init__(self)
-        self.byte_width = struct.calcsize(self.pack_string)
+        self.size = struct.calcsize(self.pack_string)
         self.order = order
         all_validators = list(self.initial_validators)
         if validators is not None:
@@ -169,12 +169,12 @@ class BytesField(BasicBinaryField):
         super(BytesField, self).__init__(label, validators, order, **kwargs)
 
     def pack_data(self, data, order):
-        buf = bytearray(self.byte_width)
+        buf = bytearray(self.size)
         length = len(data)
         if self.length == core.EXPLICIT:
             pack_length_string = order + self.length_field.pack_string
             struct.pack_into(pack_length_string, buf, 0, length)
-            start = self.length_field.byte_width
+            start = self.length_field.size
         else:
             start = 0
         buf[start:start+length] = data
@@ -187,7 +187,7 @@ class BytesField(BasicBinaryField):
             if length > self.max_length:
                 message = "Buffer cannot contain {0} bytes.".format(length)
                 raise ValueError(message)
-            data_buf = buf[self.length_field.byte_width:]
+            data_buf = buf[self.length_field.size:]
         else:
             length = self.max_length
             data_buf = buf

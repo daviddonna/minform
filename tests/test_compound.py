@@ -13,8 +13,8 @@ class TestBlankField(util.FormTest):
     def test_blank_bytes_are_not_a_field(self):
         assert self.Form._unbound_fields is None
 
-    def test_blank_bytes_count_toward_byte_width(self):
-        assert self.Form.byte_width == 4
+    def test_blank_bytes_count_toward_size(self):
+        assert self.Form.size == 4
 
     def test_unpack_blank_bytes(self):
         self.Form.unpack(b'\x00\x00\x00\x00')
@@ -32,8 +32,8 @@ class TestVariableFieldList(util.FormTest):
                                         max_entries=4,
                                         length=minform.VARIABLE)
 
-    def test_byte_width_includes_count_and_data(self):
-        assert self.Form.byte_width == 1 + 4 * 2
+    def test_size_includes_count_and_data(self):
+        assert self.Form.size == 1 + 4 * 2
 
     def test_binary_field_list_requires_max_entries(self):
         with pytest.raises(ValueError):
@@ -135,8 +135,8 @@ class TestFixedFieldList(util.FormTest):
                                         length=minform.FIXED,
                                         order=minform.BIG_ENDIAN)
 
-    def test_byte_width_is_data_byte_width(self):
-        assert self.Form.byte_width == 3 * 2
+    def test_size_is_data_size(self):
+        assert self.Form.size == 3 * 2
 
     def test_valid_data_unpacks(self):
         buf = b'\x11\x22\x33\x44\x55\x66'

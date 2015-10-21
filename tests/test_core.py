@@ -8,7 +8,7 @@ class TestBinaryItem(unittest.TestCase):
 
     class MyItem(minform.BinaryItem):
 
-        byte_width = 4
+        size = 4
 
         def pack(self, data, order=None):
             return b'\x01\x02\x03\x04'

@@ -77,17 +77,17 @@ class IntField(object):
         n = self.integer_field.min
         form = self.Form(n=n)
         buf = form.pack()
-        assert len(buf) == self.integer_field().byte_width
+        assert len(buf) == self.integer_field().size
 
     def test_max_number_can_pack(self):
         n = self.integer_field.max
         form = self.Form(n=n)
         buf = form.pack()
-        assert len(buf) == self.integer_field().byte_width
+        assert len(buf) == self.integer_field().size
 
     def test_explicit_little_endian_deserialization(self):
         temp = self.integer_field()
-        big_buf = b'\x00\x01\x02\x03\x04\x05\x06\x07'[:temp.byte_width]
+        big_buf = b'\x00\x01\x02\x03\x04\x05\x06\x07'[:temp.size]
         little_value = struct.unpack('<' + temp.pack_string, big_buf)[0]
         form = self.Form.unpack(big_buf, order=minform.LITTLE_ENDIAN)
         assert form.data == dict(n=little_value)
@@ -98,7 +98,7 @@ class IntField(object):
         class Form(minform.BinaryForm):
             n = self.integer_field(order=minform.LITTLE_ENDIAN)
 
-        buf = b'\x00\x01\x02\x03\x04\x05\x06\x07'[:temp.byte_width]
+        buf = b'\x00\x01\x02\x03\x04\x05\x06\x07'[:temp.size]
         little_value = struct.unpack('<' + temp.pack_string, buf)[0]
         form = Form.unpack(buf)
         assert form.data == dict(n=little_value)
@@ -207,7 +207,7 @@ class TestFixedBytesField(unittest.TestCase):
                 s = minform.BytesField(label='foo')
 
     def test_empty_field_has_width_0(self):
-        assert self.Form.byte_width == 10
+        assert self.Form.size == 10
 
     def test_fields_load_together(self):
         buf = up_to_ten
@@ -230,7 +230,7 @@ class TestExplicitBytesField(unittest.TestCase):
         s = minform.BytesField(max_length=256, length=minform.EXPLICIT)
 
     def test_empty_field_has_width_zero(self):
-        assert self.ShortForm.byte_width == 11
+        assert self.ShortForm.size == 11
 
     def test_fields_load_together(self):
         buf = b'\x0A' + up_to_ten
@@ -248,7 +248,7 @@ class TestExplicitBytesField(unittest.TestCase):
         assert form.data == dict(s=b'')
 
     def test_larger_buffer_has_larger_count(self):
-        assert self.LongForm.byte_width == 258
+        assert self.LongForm.size == 258
 
     def test_invalid_count_is_flagged(self):
         with pytest.raises(ValueError):

@@ -43,17 +43,17 @@ class BinaryItem(six.with_metaclass(abc.ABCMeta, object)):
         pass  # pragma: no cover
 
     def pack_into(self, buffer, offset, data, order=None):
-        if len(buffer[offset:offset+self.byte_width]) < self.byte_width:
+        if len(buffer[offset:offset+self.size]) < self.size:
             raise ValueError("Need at least {0} bytes to pack {1}".format(
-                self.byte_width, data))
-        buffer[offset:offset+self.byte_width] = self.pack(data, order=order)
+                self.size, data))
+        buffer[offset:offset+self.size] = self.pack(data, order=order)
 
     def unpack_from(self, buffer, offset=0, order=None):
-        if offset == -self.byte_width:
+        if offset == -self.size:
             buf = buffer[offset:]
         else:
-            buf = buffer[offset:offset+self.byte_width]
-        if len(buf) < self.byte_width:
+            buf = buffer[offset:offset+self.size]
+        if len(buf) < self.size:
             raise ValueError("{0} is too small for a {1}".format(
                 buf, self.__class__.__name__))
         return self.unpack(buf, order=order)
@@ -66,7 +66,6 @@ class BlankBytes(BinaryItem):
     def __init__(self, size):
         super(BlankBytes, self).__init__()
         self.size = size
-        self.byte_width = self.size
 
     def pack(self, data, order=None):
         return b'\0' * self.size
@@ -97,7 +96,7 @@ class BinaryFormMeta(wtforms.Form.__class__):
                     del nmspc[key]
         binary_items.sort(key=lambda item: item._creation_id)
         nmspc['_binary_items'] = binary_items
-        nmspc['byte_width'] = sum(item.byte_width for item in binary_items)
+        nmspc['size'] = sum(item.size for item in binary_items)
         return super(BinaryFormMeta, cls).__new__(cls, name, bases, nmspc)
 
 
@@ -107,15 +106,15 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
 
     @classmethod
     def unpack(cls, buf, order=None):
-        if len(buf) != cls.byte_width:
+        if len(buf) != cls.size:
             raise ValueError('Recieved {0} bytes; expected {1}'.format(
-                len(buf), cls.byte_width))
+                len(buf), cls.size))
         order = order or cls.order or ''
         data = {}
         start = 0
 
         for item in cls._binary_items:
-            stop = start + item.byte_width
+            stop = start + item.size
             if item.form_field is not None:
                 data[item.name] = item.unpack(buf[start:stop], order=order)
             else:
@@ -127,12 +126,12 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
     def pack(self, order=None):
         order = order or self.order or ''
 
-        size = sum(item.byte_width for item in self._binary_items)
+        size = sum(item.size for item in self._binary_items)
         buf = bytearray(size)
         start = 0
 
         for item in self._binary_items:
-            stop = start + item.byte_width
+            stop = start + item.size
             if item.form_field is not None:
                 value = self.data[item.name]
                 buf[start:stop] = item.pack(value, order=order)
@@ -143,18 +142,18 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
         return bytes(buf)
 
     def pack_into(self, buffer, offset, order=None):
-        if len(buffer[offset:offset+self.byte_width]) < self.byte_width:
+        if len(buffer[offset:offset+self.size]) < self.size:
             raise ValueError("Need at least {0} bytes to pack {1}".format(
-                self.byte_width, self.data))
-        buffer[offset:offset+self.byte_width] = self.pack(order=order)
+                self.size, self.data))
+        buffer[offset:offset+self.size] = self.pack(order=order)
 
     @classmethod
     def unpack_from(cls, buffer, offset=0, order=None):
-        if offset == -cls.byte_width:
+        if offset == -cls.size:
             buf = buffer[offset:]
         else:
-            buf = buffer[offset:offset+cls.byte_width]
-        if len(buf) < cls.byte_width:
+            buf = buffer[offset:offset+cls.size]
+        if len(buf) < cls.size:
             raise ValueError("{0} is too small for a {1}".format(
                 buf, cls.__name__))
         return cls.unpack(buf, order=order)
