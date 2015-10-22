@@ -3,20 +3,29 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Minform's documentation!
-======================================
+=======
+Minform
+=======
+
+.. toctree::
+   :maxdepth: 1
+
+   usage
+   contributing
 
 This package is available on github, at https://github.com/daviddonna/minform.
 
-Contents:
+Installation
+============
 
-.. toctree::
-   :maxdepth: 2
+At the command line::
 
-   installation
-   usage
-   contributing
-   authors
+    $ easy_install minform
+
+Or, if you have virtualenvwrapper installed::
+
+    $ mkvirtualenv minform
+    $ pip install minform
 
 Indices and tables
 ==================
@@ -24,4 +33,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

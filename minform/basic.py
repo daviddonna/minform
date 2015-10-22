@@ -7,6 +7,7 @@ from . import core
 __all__ = [
     'CharField', 'BytesField',
     'BinaryBooleanField',
+    'BinaryBooleanField',
     'Int8Field', 'UInt8Field',
     'Int16Field', 'UInt16Field',
     'Int32Field', 'UInt32Field',
@@ -59,7 +60,7 @@ class BinaryBooleanField(BasicBinaryField):
     pack_string = '?'
 
 
-class IntegerBinaryField(BasicBinaryField):
+class BinaryIntegerField(BasicBinaryField):
 
     form_field_class = wtforms.IntegerField
 
@@ -68,56 +69,56 @@ class IntegerBinaryField(BasicBinaryField):
         return [NumberRange(self.min, self.max)]
 
 
-class Int8Field(IntegerBinaryField):
+class Int8Field(BinaryIntegerField):
 
     pack_string = 'b'
     min = -128
     max = 127
 
 
-class UInt8Field(IntegerBinaryField):
+class UInt8Field(BinaryIntegerField):
 
     pack_string = 'B'
     min = 0
     max = (2 ** 8) - 1
 
 
-class Int16Field(IntegerBinaryField):
+class Int16Field(BinaryIntegerField):
 
     pack_string = 'h'
     min = -(2 ** 15)
     max = (2 ** 15) - 1
 
 
-class UInt16Field(IntegerBinaryField):
+class UInt16Field(BinaryIntegerField):
 
     pack_string = 'H'
     min = 0
     max = (2 ** 16) - 1
 
 
-class Int32Field(IntegerBinaryField):
+class Int32Field(BinaryIntegerField):
 
     pack_string = 'i'
     min = -(2 ** 31)
     max = (2 ** 31) - 1
 
 
-class UInt32Field(IntegerBinaryField):
+class UInt32Field(BinaryIntegerField):
 
     pack_string = 'I'
     min = 0
     max = (2 ** 32) - 1
 
 
-class Int64Field(IntegerBinaryField):
+class Int64Field(BinaryIntegerField):
 
     pack_string = 'q'
     min = -(2 ** 63)
     max = (2 ** 63) - 1
 
 
-class UInt64Field(IntegerBinaryField):
+class UInt64Field(BinaryIntegerField):
 
     pack_string = 'Q'
     min = 0
@@ -199,30 +200,40 @@ class BytesField(BasicBinaryField):
         return data
 
 
-def store_numbers_up_to(n, signed=False, order=None):
+def store_numbers_up_to(n, signed=False, **kwargs):
     """
     Return a BinaryField class that can store numbers up to a certain maximum.
+
+    If the number is too big to store, a ``ValueError`` will be raised.
+
+    :param n: The highest number that you expect to need to store (must be at
+        most a 64-bit integer).
+    :param signed: Return a field that can store negative numbers.
+    :param kwargs: Additional arguments get passed into the binary field
+        constructor.
+    :return: A :class:`BinaryIntegerField` that can store numbers up to at
+        least ``n``.
     """
 
     if signed:
         if n <= Int8Field.max:
-            return Int8Field(order=order)
+            return Int8Field(**kwargs)
         elif n <= Int16Field.max:
-            return Int16Field(order=order)
+            return Int16Field(**kwargs)
         elif n <= Int32Field.max:
-            return Int32Field(order=order)
+            return Int32Field(**kwargs)
         elif n <= Int64Field.max:
-            return Int64Field(order=order)
+            return Int64Field(**kwargs)
         else:
             raise ValueError("Can't track numbers up to {0}".format(n))
     else:
         if n <= UInt8Field.max:
-            return UInt8Field(order=order)
+            return UInt8Field(**kwargs)
         elif n <= UInt16Field.max:
-            return UInt16Field(order=order)
+            return UInt16Field(**kwargs)
         elif n <= UInt32Field.max:
-            return UInt32Field(order=order)
+            return UInt32Field(**kwargs)
         elif n <= UInt64Field.max:
-            return UInt64Field(order=order)
+            return UInt64Field(**kwargs)
         else:
             raise ValueError("Can't track numbers up to {0}".format(n))
