@@ -48,10 +48,14 @@ An awful lot like WTForms: you subclass ``minform.BinaryForm``, and add
 
     #               first_name (10)          last_name (10)           age (1)
     packed_data = b'David\x00\x00\x00\x00\x00Donna\x00\x00\x00\x00\x00\x18'
-    unpacked_form = MyForm.unpack()
-    assert form.data == {'first_name': 'David', 'last_name': 'Donna', 'age': 24}
+    form = MyForm.unpack(packed_data)
+    assert form.data == {
+        'first_name': b'David',
+        'last_name': b'Donna',
+        'age': 24,
+    }
 
-    next_form = MyForm(first_name='Foo', last_name='Barsson', age='100')
+    next_form = MyForm(first_name=b'Foo', last_name=b'Barsson', age=100)
     packed = next_form.pack()
     assert packed == b'Foo\x00\x00\x00\x00\x00\x00\x00Barsson\x00\x00\x00\x64'
 
