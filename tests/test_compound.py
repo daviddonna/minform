@@ -24,13 +24,13 @@ class TestBlankField(util.FormTest):
         assert form.pack() == b'\x00\x00\x00\x00'
 
 
-class TestVariableFieldList(util.FormTest):
+class TestExplicitFieldList(util.FormTest):
 
     class Form(minform.BinaryForm):
 
         stuff = minform.BinaryFieldList(minform.UInt16Field(),
                                         max_entries=4,
-                                        length=minform.VARIABLE)
+                                        length=minform.EXPLICIT)
 
     def test_size_includes_count_and_data(self):
         assert self.Form.size == 1 + 4 * 2
@@ -158,7 +158,7 @@ class F2(minform.BinaryForm):
                                   length=minform.FIXED)
     end = minform.BytesField(max_length=2, length=minform.VARIABLE)
     lst2 = minform.BinaryFieldList(minform.UInt16Field(), max_entries=1,
-                                   length=minform.VARIABLE)
+                                   length=minform.EXPLICIT)
 
 
 class TestBinaryFormField(util.FormTest):

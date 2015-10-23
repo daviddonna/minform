@@ -8,7 +8,7 @@ class BinaryFieldList(core.BinaryField):
 
     def __init__(self, inner_field, label='', validators=None,
                  min_entries=0, max_entries=None,
-                 length=core.VARIABLE, order=None,
+                 length=core.EXPLICIT, order=None,
                  **kwargs):
         core.BinaryField.__init__(self)
         if max_entries is None:
@@ -41,7 +41,7 @@ class BinaryFieldList(core.BinaryField):
         order = order or self.order
         buf = bytearray(self.size)
 
-        if self.length == core.VARIABLE:
+        if self.length == core.EXPLICIT:
             packed_count = self.count_field.pack(len(data))
             buf[0:self.count_field.size] = packed_count
             start = self.count_field.size
@@ -59,7 +59,7 @@ class BinaryFieldList(core.BinaryField):
         order = order or self.order
         data = []
 
-        if self.length == core.VARIABLE:
+        if self.length == core.EXPLICIT:
             count_chunk = buf[0:self.count_field.size]
             data_length = self.count_field.unpack(count_chunk)
             if data_length > self.max_entries:

@@ -109,7 +109,7 @@ class TestBinaryForm(unittest.TestCase):
                                       length=minform.FIXED)
         end = minform.BytesField(max_length=2, length=minform.VARIABLE)
         lst2 = minform.BinaryFieldList(minform.UInt16Field(), max_entries=1,
-                                       length=minform.VARIABLE)
+                                       length=minform.EXPLICIT)
 
     data = {
         'char': b'\x10',
