@@ -8,14 +8,14 @@ __all__ = [
     'BinaryItem', 'BlankBytes', 'BinaryField', 'BinaryForm',
 ]
 
-FIXED = 'fixed'
-AUTOMATIC = 'automatic'
-EXPLICIT = 'explicit'
+FIXED = 'fixed'  #:
+AUTOMATIC = 'automatic'  #:
+EXPLICIT = 'explicit'  #:
 
-NATIVE = '='
-LITTLE_ENDIAN = '<'
-BIG_ENDIAN = '>'
-NETWORK = '!'
+NATIVE = '='  #:
+LITTLE_ENDIAN = '<'  #:
+BIG_ENDIAN = '>'  #:
+NETWORK = '!'  #:
 
 _creation_id = 0
 
