@@ -3,13 +3,13 @@ import six
 import wtforms
 
 __all__ = [
-    'FIXED', 'VARIABLE', 'EXPLICIT',
+    'FIXED', 'AUTOMATIC', 'EXPLICIT',
     'NATIVE', 'LITTLE_ENDIAN', 'BIG_ENDIAN', 'NETWORK',
     'BinaryItem', 'BlankBytes', 'BinaryField', 'BinaryForm',
 ]
 
 FIXED = 'fixed'
-VARIABLE = 'variable'
+AUTOMATIC = 'automatic'
 EXPLICIT = 'explicit'
 
 NATIVE = '='

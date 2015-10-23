@@ -156,7 +156,7 @@ class F2(minform.BinaryForm):
     _ = minform.BlankBytes(3)
     lst = minform.BinaryFieldList(minform.UInt8Field(), max_entries=3,
                                   length=minform.FIXED)
-    end = minform.BytesField(max_length=2, length=minform.VARIABLE)
+    end = minform.BytesField(max_length=2, length=minform.AUTOMATIC)
     lst2 = minform.BinaryFieldList(minform.UInt16Field(), max_entries=1,
                                    length=minform.EXPLICIT)
 

@@ -264,7 +264,7 @@ class TestExplicitBytesField(unittest.TestCase):
 class TestVariableBytesField(util.FormTest):
 
     class Form(minform.BinaryForm):
-        s = minform.BytesField(max_length=10, length=minform.VARIABLE)
+        s = minform.BytesField(max_length=10, length=minform.AUTOMATIC)
 
     def test_full_bufer_stops_naturally(self):
         buf = up_to_ten

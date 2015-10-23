@@ -142,7 +142,7 @@ class BytesField(BasicBinaryField):
     form_field_class = wtforms.StringField
 
     def __init__(self, label='', validators=None, max_length=None,
-                 length=core.VARIABLE, order=None, **kwargs):
+                 length=core.AUTOMATIC, order=None, **kwargs):
 
         if not isinstance(max_length, int) or max_length < 0:
             raise ValueError('BytesField must be created with a '
@@ -157,7 +157,7 @@ class BytesField(BasicBinaryField):
             self.initial_validators = [Length(max=max_length, min=max_length)]
             self.pack_string = '{0}s'.format(max_length)
 
-        elif self.length == core.VARIABLE:
+        elif self.length == core.AUTOMATIC:
             self.initial_validators = [Length(max=max_length)]
             self.pack_string = '{0}s'.format(max_length)
 
@@ -194,7 +194,7 @@ class BytesField(BasicBinaryField):
             data_buf = buf
         data = data_buf[:length]
 
-        if self.length == core.VARIABLE:
+        if self.length == core.AUTOMATIC:
             data = data.rstrip(b'\x00')
 
         return data
