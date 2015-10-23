@@ -1,34 +1,34 @@
 minform package
 ======================
 
-Submodules
-----------
+Pretty much every name in the submodules below is also in the top-level
+namespace of ``minform``.
 
-minform.basic module
+minform.core
+--------------------------
+
+
+.. automodule:: minform.core
+    :members:
+    :show-inheritance:
+
+    .. autodata:: FIXED
+        :annotation:
+    .. autodata:: AUTOMATIC
+        :annotation:
+    .. autodata:: EXPLICIT
+        :annotation:
+
+minform.basic
 ---------------------------
 
 .. automodule:: minform.basic
     :members:
     :show-inheritance:
 
-minform.compound module
+minform.compound
 ------------------------------
 
 .. automodule:: minform.compound
-    :members:
-    :show-inheritance:
-
-minform.core module
---------------------------
-
-.. automodule:: minform.core
-    :members:
-    :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: minform
     :members:
     :show-inheritance:

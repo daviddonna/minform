@@ -18,7 +18,7 @@ Why does Minform exist?
 -----------------------
 
 Because I wanted to write declarative data schemas, like Google's
-`protocol buffers <https://developers.google.com/protocol-buffers/>`__,
+`protocol buffers <https://developers.google.com/protocol-buffers/>`_,
 but with a little more power on the Python end.
 
 What can Minform do for me?
@@ -58,6 +58,11 @@ An awful lot like WTForms: you subclass ``minform.BinaryForm``, and add
     next_form = MyForm(first_name=b'Foo', last_name=b'Barsson', age=100)
     packed = next_form.pack()
     assert packed == b'Foo\x00\x00\x00\x00\x00\x00\x00Barsson\x00\x00\x00\x64'
+
+Because the library is built on ``struct``, binary serializations of a form's
+data are in fixed-length buffers. This makes them easier to store, and easy to
+map onto relatively naive serializations of C structs. It also allows for
+clear documentation of the binary format.
 
 For more detailed examples, read the full docs at
 https://minform.readthedocs.org. (Coming soon!)
