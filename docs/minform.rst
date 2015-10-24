@@ -11,6 +11,15 @@ minform.core
 .. automodule:: minform.core
     :show-inheritance:
 
+    .. autoclass:: minform.core.BinaryForm
+
+    .. autoclass:: minform.core.BinaryItem
+        :members:
+
+    .. autoclass:: minform.core.BlankBytes
+
+        .. automethod:: __init__
+
 Length
 ~~~~~~
 
@@ -35,9 +44,10 @@ Length
 
         If length is ``EXPLICIT``, the packed buffer will start with an
         unsigned int that gives the length of the data (the number of bytes in
-        a BytesField, or the number of entries in a BinaryFieldList). This
-        prefix will be sized according to necessity; it will always be big
-        enough to store the ``max_length`` or ``max_entries`` of the field:
+        a ``BytesField``, or the number of entries in a ``BinaryFieldList``).
+        This prefix will be sized according to necessity; it will always be
+        big enough to store the ``max_length`` or ``max_entries`` of the
+        field:
 
         ================== =========== ===========
         maximum            prefix type prefix size
@@ -71,7 +81,7 @@ Length
     .. autodata:: AUTOMATIC
         :annotation:
 
-        The ``AUTOMATIC`` option is only available for BytesFields, and has
+        The ``AUTOMATIC`` option is only available for ``BytesField``\ s, and has
         very simple semantics: strings shorter than ``max_length`` will be
         padded with null bytes when packed, and null bytes will be trimmed
         from the end when unpacking a buffer.::
@@ -85,6 +95,8 @@ Length
 
 Byte order
 ~~~~~~~~~~
+
+.. _byte-order:
 
     .. autodata:: NATIVE
         :annotation:
