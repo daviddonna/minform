@@ -1,27 +1,30 @@
-minform package
-======================
+API
+===
 
-Pretty much every name in the submodules below is also in the top-level
-namespace of ``minform``.
+Base Classes
+------------
 
-minform.core
---------------------------
+.. autoclass:: minform.BinaryForm
+    :members:
 
+.. autoclass:: minform.BinaryItem
+    :members:
 
-.. automodule:: minform.core
-    :show-inheritance:
+Items
+-----
 
-    .. autoclass:: minform.core.BinaryForm
+.. autoclass:: minform.BlankBytes
+    :members:
 
-    .. autoclass:: minform.core.BinaryItem
-        :members:
-
-    .. autoclass:: minform.core.BlankBytes
-
-        .. automethod:: __init__
+Custom BinaryItems
+~~~~~~~~~~~~~~~~~~
 
 Length
-~~~~~~
+------
+
+.. _length:
+
+.. automodule:: minform
 
     The following constants are used as the ``length`` argument when
     constructing a :class:`BytesField <minform.basic.BytesField>` or a
@@ -94,31 +97,25 @@ Length
             auto_bytes.unpack(b'abc\0def\0\0\0') == b'abc\0def'
 
 Byte order
-~~~~~~~~~~
+----------
 
 .. _byte-order:
 
-    .. autodata:: NATIVE
-        :annotation:
-    .. autodata:: LITTLE_ENDIAN
-        :annotation:
-    .. autodata:: BIG_ENDIAN
-        :annotation:
-    .. autodata:: NETWORK
-        :annotation:
+.. autodata:: NATIVE
+    :annotation:
+.. autodata:: LITTLE_ENDIAN
+    :annotation:
+.. autodata:: BIG_ENDIAN
+    :annotation:
+.. autodata:: NETWORK
+    :annotation:
 
-        These constants control
+    These constants operate according to the `byte order constants from
+    the struct module <https://docs.python.org/3/library/struct.html#byte-
+    order-size-and-alignment>`_. The ``minform.NATIVE`` constant
+    corresponds to the ``'='`` prefix, rather than ``'@'``.
 
-minform.basic
----------------------------
+.. note::
 
-.. automodule:: minform.basic
-    :members:
-    :show-inheritance:
-
-minform.compound
-------------------------------
-
-.. automodule:: minform.compound
-    :members:
-    :show-inheritance:
+    Setting the ``order`` property on a ``BinaryForm`` or ``BinaryItem`` will
+    override the ``order`` argument of ``pack`` and ``unpack`` methods. For clarity, we recommend that you use **either** the attribute **or** the ``pack``/``unpack`` argument.

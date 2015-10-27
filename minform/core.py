@@ -8,14 +8,14 @@ __all__ = [
     'BinaryItem', 'BlankBytes', 'BinaryField', 'BinaryForm',
 ]
 
-FIXED = 'fixed'  #:
-AUTOMATIC = 'automatic'  #:
-EXPLICIT = 'explicit'  #:
+FIXED = 'fixed'
+AUTOMATIC = 'automatic'
+EXPLICIT = 'explicit'
 
-NATIVE = '='  #:
-LITTLE_ENDIAN = '<'  #:
-BIG_ENDIAN = '>'  #:
-NETWORK = '!'  #:
+NATIVE = '='
+LITTLE_ENDIAN = '<'
+BIG_ENDIAN = '>'
+NETWORK = '!'
 
 _creation_id = 0
 
@@ -98,7 +98,8 @@ class BlankBytes(BinaryItem):
     removed from the class's namespace.
 
     The corresponding bytes will be null when the form is packed, and ignored
-    when a data buffer is unpacked.
+    when a data buffer is unpacked. Likewise, the bytes in a packed buffer
+    will be ignored, and unpacking blank bytes will always return ``None``.
     """
 
     name = None
@@ -151,22 +152,34 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
 
     A ``BinaryForm`` is used much like a `wtforms.Form
     <https://wtforms.readthedocs.org/en/latest/forms.html>`_. Instead of
-    ``wtforms.Field``\ s, however, the class members should be
-    :class:`BinaryItem`\ s.
+    `wtforms.Field <https://wtforms.readthedocs.org/en/latest/fields.html>`_
+    instances, however, the class members should be instances of
+    :class:`BinaryItem <minform.BinaryItem>`.
 
     When the class is created, the ``BinaryItem`` class members will be used,
     in order, to generate a binary protocol for serializing and deserializing
-    instances of the form.
+    instances of the form. Using the ``BinaryForm`` subclass's :meth:`unpack
+    <minform.BinaryForm.unpack>` method will bind a form to the data
+    represented by a buffer.
 
     .. attribute:: size
 
-        ``int`` of the number of bytes in this class's packed form.
+        The number of bytes in a packed buffer of data for this class.
+
+    .. attribute:: order
+
+        Byte ordering of numbers, etc. in corresponding buffers of packed
+        data. See :ref:`Byte Order <byte-order>` for more.
     """
 
     order = None
 
     @classmethod
     def unpack(cls, buf, order=None):
+        """
+
+        """
+
         if len(buf) != cls.size:
             raise ValueError('Recieved {0} bytes; expected {1}'.format(
                 len(buf), cls.size))
@@ -185,6 +198,12 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
         return cls(data=data)
 
     def pack(self, order=None):
+        """
+        .. note::
+
+            This method assumes that ``self`` is bound to data.
+        """
+
         order = order or self.order or ''
 
         size = sum(item.size for item in self._binary_items)

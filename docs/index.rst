@@ -11,7 +11,9 @@ Minform
    :maxdepth: 1
 
    usage
+   minform
    contributing
+   authors
 
 This package is available on github, at https://github.com/daviddonna/minform.
 
@@ -26,10 +28,3 @@ Or, if you have virtualenvwrapper installed::
 
     $ mkvirtualenv minform
     $ pip install minform
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
