@@ -25,16 +25,94 @@ Base Classes
     :members:
 
 .. autoclass:: minform.BinaryItem
+
+    A number of :class:`BinaryItem <minform.BinaryItem>` subclasses have
+    already been provided; see :ref:`items` for more.
+
     :members:
 
-Items
------
+    .. attribute:: size
+
+        The number of bytes that will be used to store the item when the
+        parent form is packed in a buffer.
+
+    .. note::
+
+        If you subclass :class:`BinaryItem <minform.BinaryItem>`, you need to
+        ensure that the object will have an appropriate :attr:`size <.>`
+        property, since it is used by the form to split up buffer data for
+        unpacking, and to assembled packed data.
+
+    .. attribute:: form_field
+
+        This property is optional; for example, :class:`BlankBytes
+        <minform.BlankBytes>` instances do not have a :attr:`form_field <.>`.
+        If present, it should be an instance of `wtforms.Field
+        <https://wtforms.readthedocs.org/en/latest/fields.html>`_. This field
+        will then become a member of the form, just like a field in a
+        ``wtforms.Form``.
+
+
+Binary Items
+------------
+
+Blank Bytes
+~~~~~~~~~~~
 
 .. autoclass:: minform.BlankBytes
+
+Binary Fields
+~~~~~~~~~~~~~
+
+.. class:: minform.BinaryField(label='', validators=None, order=None, **kwargs)
+
+    .. note::
+
+        This class should not be instantiated directly. Instead, use one of
+        its subclasses, described below.
+
+    The following classes all have :attr:`form_field <BinaryItem.form_field>`
+    attributes, and their constructors accept a superset of the construction
+    parameters for a `wtforms.Field`_. In general, constructor arguments whose
+    names correspond to :class:`BinaryItem <minform.BinaryItem>` construction
+    parameters will be passed in to the constructor for the corresponding
+    ``wtforms.Field``. So, for example, you can set a ``label`` for HTML
+    rendering, or add extra ``validators``.
+
+    The only notable exceptions are the ``order`` and ``length`` parameters,
+    which are used to set the :ref:`byte order <byte-order>` and :ref:`length
+    policy <length>`, and will not be passed through to the ``Field``.
+
+.. autoclass:: minform.BinaryBooleanField(BinaryField arguments)
+.. autoclass:: minform.CharField(BinaryField arguments)
+.. autoclass:: minform.basic.BinaryIntegerField(BinaryField arguments)
+.. autoclass:: minform.Float32Field(BinaryField arguments)
+.. autoclass:: minform.Float64Field(BinaryField arguments)
+.. autoclass:: minform.BytesField(BinaryField arguments, length=minform.AUTOMATIC)
+
+.. autoclass:: minform.BinaryFieldList(inner_field, BinaryField arguments, min_entries=0, max_entries=None, length=minform.EXPLICIT)
+    :members:
+
+.. autoclass:: minform.BinaryFormField(form_class, BinaryField arguments)
     :members:
 
 Custom BinaryItems
 ~~~~~~~~~~~~~~~~~~
+
+When creating a custom :class:`BinaryItem <minform.BinaryItem>`, you need to
+be sure to include:
+
+* A ``size`` attribute. This is used to determine how many bytes will be
+  required by the ``unpack`` method, and how many will be expected to be
+  returned by the ``pack`` method. This attribute is required even if you
+  write custom ``pack`` and ``unpack`` methods that don't refer to it!
+
+* A ``pack(self, data, order=None)`` method. The type of ``data`` should be
+  compatible with the type returned by the ``unpack`` method (below).
+
+* An ``unpack(self, buf, order=None)`` method. You can expect ``buf`` to have
+  ``self.size`` bytes when the method is invoked in the course of using a
+  ``BinaryForm``.
 
 Length
 ------
@@ -51,7 +129,7 @@ Length
     .. autodata:: FIXED
         :annotation:
 
-        If the length is ``FIXED``, all of the packed information, including terminal null bytes, will be considered part of the data.::
+        If the length is :data:`FIXED <.>`, all of the packed information, including terminal null bytes, will be considered part of the data.::
 
             fixed_bytes = BytesField(max_length=6, length=FIXED)
             fixed_bytes.unpack(b'foobar\0\0\0\0') == b'foobar\0\0\0\0'
@@ -62,12 +140,12 @@ Length
     .. autodata:: EXPLICIT
         :annotation:
 
-        If length is ``EXPLICIT``, the packed buffer will start with an
-        unsigned int that gives the length of the data (the number of bytes in
-        a ``BytesField``, or the number of entries in a ``BinaryFieldList``).
-        This prefix will be sized according to necessity; it will always be
-        big enough to store the ``max_length`` or ``max_entries`` of the
-        field:
+        If length is :data:`EXPLICIT <.>`, the packed buffer will start with
+        an unsigned int that gives the length of the data (the number of bytes
+        in a :class:`BytesField <minform.BytesField>`, or the number of
+        entries in a :class:`BinaryFieldList <minform.BinaryFieldList>`). This
+        prefix will be sized according to necessity; it will always be big
+        enough to store the ``max_length`` or ``max_entries`` of the field:
 
         ================== =========== ===========
         maximum            prefix type prefix size
@@ -78,8 +156,9 @@ Length
         larger             UInt64      8 bytes
         ================== =========== ===========
 
-        If the max is larger than 2\ :sup:`64`, a ``ValueError`` will be thrown.
-        Here are some examples of the use of ``EXPLICIT`` length fields:::
+        If the max is larger than 2\ :sup:`64`, a ``ValueError`` will be
+        thrown. Here are some examples of the use of :data:`EXPLICIT <.>`
+        length fields:::
 
             explicit_bytes = BytesField(max_length=9, length=EXPLICIT)
 
@@ -101,10 +180,11 @@ Length
     .. autodata:: AUTOMATIC
         :annotation:
 
-        The ``AUTOMATIC`` option is only available for ``BytesField``\ s, and has
-        very simple semantics: strings shorter than ``max_length`` will be
-        padded with null bytes when packed, and null bytes will be trimmed
-        from the end when unpacking a buffer.::
+        The :data:`AUTOMATIC <.>` option is only available for
+        :class:`BytesField <minform.BytesField>`, and has very simple
+        semantics: strings shorter than ``max_length`` will be padded with
+        null bytes when packed, and null bytes will be trimmed from the end
+        when unpacking a buffer.::
 
             auto_bytes = BytesField(max_length=10, length=AUTOMATIC)
 
@@ -129,10 +209,15 @@ Byte order
 
     These constants operate according to the `byte order constants from
     the struct module <https://docs.python.org/3/library/struct.html#byte-
-    order-size-and-alignment>`_. The ``minform.NATIVE`` constant
+    order-size-and-alignment>`_. The :data:`minform.NATIVE` constant
     corresponds to the ``'='`` prefix, rather than ``'@'``.
 
 .. note::
 
-    Setting the ``order`` property on a ``BinaryForm`` or ``BinaryItem`` will
-    override the ``order`` argument of ``pack`` and ``unpack`` methods. For clarity, we recommend that you use **either** the attribute **or** the ``pack``/``unpack`` argument.
+    Setting the ``order`` property on a :class:`BinaryForm
+    <minform.BinaryForm>` or :class:`BinaryItem <minform.BinaryItem>` will
+    override the ``order`` argument of :meth:`pack <minform.BinaryItem.pack>`
+    and :meth:`unpack <minform.BinaryItem.unpack>` methods. For clarity, we
+    recommend that you use **either** the attribute **or** the :meth:`pack
+    <minform.BinaryItem.pack>`/:meth:`unpack <minform.BinaryItem.unpack>`
+    argument.

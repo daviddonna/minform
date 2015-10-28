@@ -29,14 +29,8 @@ def _new_creation_id():
 class BinaryItem(six.with_metaclass(abc.ABCMeta, object)):
 
     """
-    Item that occupies a block of bytes in a :class:`BinaryForm <.BinaryForm>`
-
-    .. attribute:: size
-
-        The number of bytes that will be used to store the item when the
-        parent form is packed in a buffer. If you subclass ``BinaryItem``,
-        you need to ensure that the object will have an appropriate ``size``
-        property.
+    Item that occupies a block of bytes in a :class:`BinaryForm
+    <minform.BinaryForm>`
     """
 
     order = None
@@ -66,7 +60,7 @@ class BinaryItem(six.with_metaclass(abc.ABCMeta, object)):
             endianness. *If* ``self.order`` *is set, this parameter will be
             ignored.*
         :return: data stored in the buffer
-        :raises: ValueError if ``buf`` has the wrong size.
+        :raises: ``ValueError`` if ``buf`` has the wrong size.
         """
         pass  # pragma: no cover
 
@@ -92,21 +86,27 @@ class BlankBytes(BinaryItem):
     """
     Add padding to a form when serialized.
 
-    A ``BlankBytes`` instance can be placed anywhere in the list of fields in
-    a ``BinaryForm`` definition. It doesn't matter what name you give it; when
-    the form's fields are processed, the ``BlankBytes`` object itself will be
-    removed from the class's namespace.
+    A :class:`BlankBytes <.>` instance can be placed anywhere in the list of
+    fields in a :class:`BinaryForm <minform.BinaryForm>` definition. It
+    doesn't matter what name you give it; when the form's fields are
+    processed, the :class:`BlankBytes <.>` object itself will be removed from
+    the class's namespace.
 
     The corresponding bytes will be null when the form is packed, and ignored
     when a data buffer is unpacked. Likewise, the bytes in a packed buffer
     will be ignored, and unpacking blank bytes will always return ``None``.
+
+    Because :class:`BlankBytes <.>` objects lack a :attr:`form_field
+    <minform.BinaryItem.form_field>` attribute, there will be no corresponding
+    attribute in a parent :class:`BinaryForm <minform.BinaryForm>`'s data.
     """
 
     name = None
 
     def __init__(self, size):
         """
-        The ``BlankBytes`` item will correspond to ``size`` packed bytes.
+        The :class:`BlankBytes <.>` item will correspond to ``size`` packed
+        bytes.
         """
 
         super(BlankBytes, self).__init__()
@@ -150,15 +150,16 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
     """
     Form with the power to serialize to and deserialize from packed bytes!
 
-    A ``BinaryForm`` is used much like a `wtforms.Form
+    A :class:`BinaryForm <.>` is used much like a `wtforms.Form
     <https://wtforms.readthedocs.org/en/latest/forms.html>`_. Instead of
     `wtforms.Field <https://wtforms.readthedocs.org/en/latest/fields.html>`_
     instances, however, the class members should be instances of
     :class:`BinaryItem <minform.BinaryItem>`.
 
-    When the class is created, the ``BinaryItem`` class members will be used,
-    in order, to generate a binary protocol for serializing and deserializing
-    instances of the form. Using the ``BinaryForm`` subclass's :meth:`unpack
+    When the class is created, the :class:`BinaryItem <minform.BinaryItem>`
+    class members will be used, in order, to generate a binary protocol for
+    serializing and deserializing instances of the form. Using the
+    :class:`BinaryForm <.>` subclass's :meth:`unpack
     <minform.BinaryForm.unpack>` method will bind a form to the data
     represented by a buffer.
 
@@ -177,7 +178,14 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
     @classmethod
     def unpack(cls, buf, order=None):
         """
+        ``cls`` is the class on which this method is being called.
 
+        :param buf: bytes object of length ``cls.size``
+        :param order: :ref:`byte order <byte-order>` constant for integer
+            endianness. *If* ``cls.order`` *is set, this parameter will be
+            ignored.*
+        :return: instance of ``cls`` bound to the data stored in the buffer
+        :raises: ``ValueError`` if ``buf`` has the wrong size.
         """
 
         if len(buf) != cls.size:
@@ -199,9 +207,12 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
 
     def pack(self, order=None):
         """
-        .. note::
+        Serialize this form's bound data into packed bytes.
 
-            This method assumes that ``self`` is bound to data.
+        :param order: :ref:`byte order <byte-order>` constant dictating the
+            endianness of packed integers. *If* ``self.order`` *is set, this
+            parameter will be ignored.*
+        :return: bytes object with length ``self.size``
         """
 
         order = order or self.order or ''

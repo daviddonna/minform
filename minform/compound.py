@@ -6,6 +6,10 @@ from . import basic
 
 class BinaryFieldList(core.BinaryField):
 
+    """
+
+    """
+
     def __init__(self, inner_field, label='', validators=None,
                  min_entries=0, max_entries=None,
                  length=core.EXPLICIT, order=None,
@@ -80,6 +84,20 @@ class BinaryFieldList(core.BinaryField):
 
 
 class BinaryFormField(core.BinaryField):
+
+    """
+    Nest one :class:`BinaryForm <minform.BinaryForm>` inside another.
+
+    .. attribute:: form_class
+
+        The :class:`BinaryForm <minform.BinaryForm>` that describes the
+        contents of this field. A :class:`BinaryFormField <.>` instance will
+        have the same ``size`` as its ``form_class``, and will ``pack`` and
+        ``unpack`` data in the same ways.
+
+    .. attribute:: form_field
+        :annotation: : wtforms.FormField
+    """
 
     def __init__(self, form_class, label='', validators=None, order=None,
                  **kwargs):

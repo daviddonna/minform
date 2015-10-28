@@ -49,6 +49,17 @@ class BasicBinaryField(core.BinaryField):
 
 class CharField(BasicBinaryField):
 
+    """
+    Store a single byte as a one-character ``str`` (in Python 2) or ``bytes``
+    object (in Python 3).
+
+    .. attribute:: size
+        :annotation: = 1
+
+    .. attribute:: form_field
+        :annotation: : wtforms.StringField
+    """
+
     form_field_class = wtforms.StringField
     initial_validators = [Length(min=1, max=1)]
     pack_string = 'c'
@@ -56,11 +67,44 @@ class CharField(BasicBinaryField):
 
 class BinaryBooleanField(BasicBinaryField):
 
+    """
+    Store either ``True`` or ``False`` as ``b'\\x01'`` or ``b'\\x00'``
+    (respectively).
+
+    .. attribute:: size
+        :annotation: = 1
+
+    .. attribute:: form_field
+        :annotation: : wtforms.BooleanField
+    """
+
     form_field_class = wtforms.BooleanField
     pack_string = '?'
 
 
 class BinaryIntegerField(BasicBinaryField):
+
+    """
+    This class should not be instantiated directly; instead, you should use
+    one of its subclasses, which determine what kind of ``int`` is stored,
+    and how. Those subclasses are:
+
+    ============================ ============ =============== ================
+    Name                         ``size``     Min             Max
+    ============================ ============ =============== ================
+    :class:`minform.Int8Field`   1            -128            127
+    :class:`minform.UInt8Field`  1            0               255
+    :class:`minform.Int16Field`  2            -32768          32767
+    :class:`minform.UInt16Field` 2            0               65535
+    :class:`minform.Int32Field`  4            -2\ :sup:`31`   2\ :sup:`31` - 1
+    :class:`minform.UInt32Field` 4            0               2\ :sup:`32` - 1
+    :class:`minform.Int64Field`  8            -2\ :sup:`63`   2\ :sup:`63` - 1
+    :class:`minform.UInt64Field` 8            0               2\ :sup:`64` - 1
+    ============================ ============ =============== ================
+
+    .. attribute:: form_field
+        :annotation: : wtforms.IntegerField
+    """
 
     form_field_class = wtforms.IntegerField
 
@@ -127,17 +171,60 @@ class UInt64Field(BinaryIntegerField):
 
 class Float32Field(BasicBinaryField):
 
+    """
+    Store a ``float`` in four bytes.
+
+    .. attribute:: size
+        :annotation: = 4
+
+    .. attribute:: form_field
+        :annotation: : wtforms.FloatField
+    """
+
     form_field_class = wtforms.FloatField
     pack_string = 'f'
 
 
 class Float64Field(BasicBinaryField):
 
+    """
+    Store a ``float`` in eight bytes.
+
+    .. attribute:: size
+        :annotation: = 8
+
+    .. attribute:: form_field
+        :annotation: : wtforms.FloatField
+    """
+
     form_field_class = wtforms.FloatField
     pack_string = 'd'
 
 
 class BytesField(BasicBinaryField):
+
+    """
+    Store *N* bytes.
+
+    .. attribute:: size
+
+        The ``size`` of a :class:`BytesField <.>` with ``max_length = N``
+        varies based on the ``length`` argument used to construct it.
+
+        If ``length`` is :attr:`FIXED <minform.FIXED>` or :attr:`AUTOMATIC
+        <minform.AUTOMATIC>`, ``size`` will be ``N``.
+
+        If ``length`` is :attr:`EXPLICIT <minform.EXPLICIT>`, there will be
+        one or more extra bytes at the beginning of the packed data, which
+        store the number of bytes used by the string. This will be the
+        smallest number of bytes needed to store a number up to
+        ``max_length``. So, ``size`` can be ``N+1``, ``N+2``, ``N+4``, or
+        ``N+8``. (For more information, se the documentation for
+        :data:`EXPLICIT <minform.EXPLICIT>`.)
+
+    .. attribute:: form_field
+        :annotation: : wtforms.StringField
+    """
 
     form_field_class = wtforms.StringField
 
