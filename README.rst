@@ -1,8 +1,5 @@
-This page is a placeholder!
-===========================
-
-**The Minform package has not yet been released to PyPI, and is not yet fully
-documented. Come back in a little while!**
+Minform
+=======
 
 .. image:: https://img.shields.io/travis/daviddonna/minform.svg
    :target: https://travis-ci.org/daviddonna/minform
@@ -62,7 +59,8 @@ An awful lot like WTForms: you subclass ``minform.BinaryForm``, and add
 Because the library is built on ``struct``, binary serializations of a form's
 data are in fixed-length buffers. This makes them easier to store, and easy to
 map onto relatively naive serializations of C structs. It also allows for
-clear documentation of the binary format.
+clear documentation of the binary format, because the data maps predictably
+onto different positions in a packed buffer.
 
 Compound BinaryFields allow you to create nested structures that still
 serialize into flat buffers.
@@ -89,4 +87,4 @@ serialize into flat buffers.
                             b'\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0)  # goons[3]
 
 For more detailed examples, read the full docs at
-https://minform.readthedocs.org. (Coming soon!)
+https://minform.readthedocs.org.
