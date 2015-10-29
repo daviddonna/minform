@@ -9,7 +9,25 @@ class BinaryFieldList(core.BinaryField):
     """
     Store a homogeneous list of information.
 
+    .. attribute:: inner_field
 
+        A :class:`BinaryField <wtforms.BinaryField>`
+
+    .. attribute:: max_entries
+
+        The maximum number of items that can be stored in the list.
+
+    .. attribute:: size
+
+        If ``length`` is :data:`minform.FIXED`, ``size`` will be equal to
+        ``max_size * inner_field.length``.
+
+        If ``length`` is :data:`minform.EXPLICIT`, ``size`` will be
+        ``prefix_length + (max_size * inner_field.length)``. The value of
+        ``prefix_length`` follows the documentation for :ref:`length`.
+
+    .. attribute:: form_field
+        :annotation: : wtforms.FieldList
     """
 
     def __init__(self, inner_field, label='', validators=None,
