@@ -1,5 +1,5 @@
 ========
-Usage
+API
 ========
 
 .. _WTForms: https://wtforms.readthedocs.org/
