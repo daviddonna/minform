@@ -7,12 +7,13 @@ from . import basic
 class BinaryFieldList(core.BinaryField):
 
     """
+    Store a homogeneous list of information.
+
 
     """
 
     def __init__(self, inner_field, label='', validators=None,
-                 min_entries=0, max_entries=None,
-                 length=core.EXPLICIT, order=None,
+                 max_entries=None, length=core.EXPLICIT, order=None,
                  **kwargs):
         core.BinaryField.__init__(self)
         if max_entries is None:
@@ -37,9 +38,7 @@ class BinaryFieldList(core.BinaryField):
         self.inner_field = inner_field
         unbound_field = self.inner_field.form_field
         self.form_field = wtforms.FieldList(unbound_field, label, validators,
-                                            min_entries=min_entries,
-                                            max_entries=max_entries,
-                                            **kwargs)
+                                            max_entries=max_entries, **kwargs)
 
     def pack(self, data, order=None):
         order = order or self.order
