@@ -64,5 +64,29 @@ data are in fixed-length buffers. This makes them easier to store, and easy to
 map onto relatively naive serializations of C structs. It also allows for
 clear documentation of the binary format.
 
+Compound BinaryFields allow you to create nested structures that still
+serialize into flat buffers.
+
+.. code:: python
+
+    class MyBigBadForm(minform.BinaryForm):
+        """
+        This is taking a turn for campy criminality.
+        """
+        riches = minforms.Int16Field()
+        goons = minform.BinaryFieldList(Person, max_entries=4, length=minform.EXPLICIT)
+
+    squad = MyBigBadForm(riches=55223, goons=[
+        {'first_name': 'Joey', 'last_name': 'Schmoey', 'age': 32},
+        {'first_name': 'Manny', 'last_name': 'The Man', 'age': 40},
+        {'first_name': 'Gerta', 'last_name': 'Goethe', 'age': 52},
+    ])
+    assert squad.pack() == (b'\xd7\xb7' +                                  # riches
+                            b'\x03' +                                      # goons prefix
+                            b'Joey\0\0\0\0\0\0Schmoey\0\0\0\x32' +         # goons[0]
+                            b'Manny\0\0\0\0\0The Man\0\0\0\x40' +          # goons[1]
+                            b'Gerta\0\0\0\0\0Goethe\0\0\0\0\x52' +         # goons[2]
+                            b'\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0)  # goons[3]
+
 For more detailed examples, read the full docs at
 https://minform.readthedocs.org. (Coming soon!)
