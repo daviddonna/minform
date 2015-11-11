@@ -84,7 +84,7 @@ serialize into flat buffers.
                             b'Joey\0\0\0\0\0\0Schmoey\0\0\0\x32' +         # goons[0]
                             b'Manny\0\0\0\0\0The Man\0\0\0\x40' +          # goons[1]
                             b'Gerta\0\0\0\0\0Goethe\0\0\0\0\x52' +         # goons[2]
-                            b'\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0)  # goons[3]
+                            b'\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0') # goons[3]
 
 For more detailed examples, read the full docs at
 https://minform.readthedocs.org.
