@@ -42,7 +42,7 @@ test_requirements = [
 
 setup(
     name='minform',
-    version='0.1.1',
+    version='0.1.2',
     description="WTForms/struct integration to validate and serialize to packed buffers of binary data.",
     long_description=readme + '\n\n' + history,
     author="David Donna",
