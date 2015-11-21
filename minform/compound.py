@@ -11,18 +11,22 @@ class BinaryFieldList(core.BinaryField):
 
     .. attribute:: inner_field
 
-        A :class:`BinaryField <wtforms.BinaryField>`
+        A :class:`~wtforms.BinaryField`
 
     .. attribute:: max_entries
 
         The maximum number of items that can be stored in the list.
 
+    .. attribute:: length
+
+        A :ref:`length` constant.
+
     .. attribute:: size
 
-        If ``length`` is :data:`minform.FIXED`, ``size`` will be equal to
+        If :attr:`length` is :data:`minform.FIXED`, *size* will be equal to
         ``max_size * inner_field.length``.
 
-        If ``length`` is :data:`minform.EXPLICIT`, ``size`` will be
+        If :attr:`length` is :data:`minform.EXPLICIT`, *size* will be
         ``prefix_length + (max_size * inner_field.length)``. The value of
         ``prefix_length`` follows the documentation for :ref:`length`.
 
@@ -103,14 +107,14 @@ class BinaryFieldList(core.BinaryField):
 class BinaryFormField(core.BinaryField):
 
     """
-    Nest one :class:`BinaryForm <minform.BinaryForm>` inside another.
+    Nest one :class:`~minform.BinaryForm` inside another.
 
     .. attribute:: form_class
 
-        The :class:`BinaryForm <minform.BinaryForm>` that describes the
-        contents of this field. A :class:`BinaryFormField <.>` instance will
-        have the same ``size`` as its ``form_class``, and will ``pack`` and
-        ``unpack`` data in the same ways.
+        The :class:`~minform.BinaryForm` that describes the contents of this
+        field. A :class:`BinaryFormField` instance will have the same
+        :attr:`~BinaryItem.size` as its :attr:`form_class`, and will pack and
+        unpack data in the same ways.
 
     .. attribute:: form_field
         :annotation: : wtforms.FormField
