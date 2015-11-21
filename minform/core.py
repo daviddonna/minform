@@ -218,7 +218,7 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
         :param order: :ref:`byte order <byte-order>` constant for integer
             endianness. *If* :attr:`cls.order <order>` *is set, this parameter
             will be ignored.*
-        :return: :class:<BinaryForm> bound to the data stored in the buffer
+        :return: :class:`BinaryForm` bound to the data stored in the buffer
         :raises: ``ValueError`` if ``buf`` has the wrong size.
         """
 
