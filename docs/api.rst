@@ -72,10 +72,14 @@ Custom BinaryItems
       required even if you write custom ``pack`` and ``unpack`` methods that
       don't refer to it!
 
-    * A :meth:`~BinaryItem.pack` method. The type of :paramref:`~minform.BinaryItem.pack.data` should be compatible with the type returned by the :meth:`~BinaryItem.unpack` method (below).
+    * A :meth:`~BinaryItem.pack` method. The type of
+      :paramref:`~minform.BinaryItem.pack.data` should be compatible with the
+      type returned by the :meth:`~BinaryItem.unpack` method (below).
 
-    * An :meth:`~BinaryItem.unpack` method. You can expect :paramref:`~minform.BinaryItem.unpack.buf` to have ``self.size`` bytes when the method is
-      invoked in the course of using a :class:`BinaryForm`.
+    * An :meth:`~BinaryItem.unpack` method. You can expect
+      :paramref:`~minform.BinaryItem.unpack.buf` to have
+      :attr:`self.size <BinaryItem.size>` bytes when the method is invoked in
+      the course of using a :class:`BinaryForm`.
 
 .. _length:
 
