@@ -4,18 +4,6 @@ from wtforms.validators import Length, NumberRange
 
 from . import core
 
-__all__ = [
-    'CharField', 'BytesField',
-    'BinaryBooleanField',
-    'BinaryBooleanField',
-    'Int8Field', 'UInt8Field',
-    'Int16Field', 'UInt16Field',
-    'Int32Field', 'UInt32Field',
-    'Int64Field', 'UInt64Field',
-    'Float32Field', 'Float64Field',
-    'store_numbers_up_to',
-]
-
 
 class BasicBinaryField(core.BinaryField):
 
@@ -86,21 +74,21 @@ class BinaryIntegerField(BasicBinaryField):
 
     """
     This class should not be instantiated directly; instead, you should use
-    one of its subclasses, which determine what kind of ``int`` is stored,
-    and how. Those subclasses are:
+    one of its subclasses, which determine what kind of int is stored, and
+    how. Those subclasses are:
 
-    ============================ ============ =============== ================
-    Name                         ``size``     Min             Max
-    ============================ ============ =============== ================
-    :class:`minform.Int8Field`   1            -128            127
-    :class:`minform.UInt8Field`  1            0               255
-    :class:`minform.Int16Field`  2            -32768          32767
-    :class:`minform.UInt16Field` 2            0               65535
-    :class:`minform.Int32Field`  4            -2\ :sup:`31`   2\ :sup:`31` - 1
-    :class:`minform.UInt32Field` 4            0               2\ :sup:`32` - 1
-    :class:`minform.Int64Field`  8            -2\ :sup:`63`   2\ :sup:`63` - 1
-    :class:`minform.UInt64Field` 8            0               2\ :sup:`64` - 1
-    ============================ ============ =============== ================
+    ==================== ==== =============== ================
+    Name                 size Min             Max
+    ==================== ==== =============== ================
+    :class:`Int8Field`   1    -128            127
+    :class:`UInt8Field`  1    0               255
+    :class:`Int16Field`  2    -32768          32767
+    :class:`UInt16Field` 2    0               65535
+    :class:`Int32Field`  4    -2\ :sup:`31`   2\ :sup:`31` - 1
+    :class:`UInt32Field` 4    0               2\ :sup:`32` - 1
+    :class:`Int64Field`  8    -2\ :sup:`63`   2\ :sup:`63` - 1
+    :class:`UInt64Field` 8    0               2\ :sup:`64` - 1
+    ==================== ==== =============== ================
 
     .. attribute:: form_field
         :annotation: : wtforms.IntegerField
@@ -206,24 +194,29 @@ class BytesField(BasicBinaryField):
     """
     Store *N* bytes.
 
+    .. attribute:: max_length
+
+        Maximum number of bytes in the stored string. Note that this may not
+        be equal to :attr:`size`.
+
     .. attribute:: size
 
-        The ``size`` of a :class:`BytesField <.>` with ``max_length = N``
-        varies based on the ``length`` argument used to construct it.
+        The :attr:`size` of a :class:`BytesField` with ``max_length`` *N*
+        varies based on the *length* argument used to construct it.
 
-        If ``length`` is :attr:`FIXED <minform.FIXED>` or :attr:`AUTOMATIC
-        <minform.AUTOMATIC>`, ``size`` will be ``N``.
+        If *length* is :attr:`~minform.FIXED` or :attr:`~minform.AUTOMATIC`,
+        ``size`` will be *N*.
 
-        If ``length`` is :attr:`EXPLICIT <minform.EXPLICIT>`, there will be
-        one or more extra bytes at the beginning of the packed data, which
-        store the number of bytes used by the string. This will be the
-        smallest number of bytes needed to store a number up to
-        ``max_length``. So, ``size`` can be ``N+1``, ``N+2``, ``N+4``, or
-        ``N+8``. (For more information, se the documentation for
-        :data:`EXPLICIT <minform.EXPLICIT>`.)
+        If *length* is :attr:`~minform.EXPLICIT`, there will be one or more
+        extra bytes at the beginning of the packed data, which store the
+        number of bytes used by the string. This will be the smallest number
+        of bytes needed to store a number up to ``max_length``. So, ``size``
+        can be *N+1*, *N+2*, *N+4*, or *N+8*. (For more information, see the
+        documentation for :data:`~minform.EXPLICIT`.)
 
     .. attribute:: form_field
         :annotation: : wtforms.StringField
+
     """
 
     form_field_class = wtforms.StringField
