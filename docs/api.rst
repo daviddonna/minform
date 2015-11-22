@@ -50,8 +50,8 @@ Blank Bytes
     .. autoclass:: BlankBytes
         :members:
 
-Binary Fields
-~~~~~~~~~~~~~
+Basic Binary Fields
+~~~~~~~~~~~~~~~~~~~
 
     .. autoclass:: BinaryField
         :members: size form_field
@@ -67,6 +67,16 @@ Binary Fields
         :members: size form_field
     .. autoclass:: BytesField
         :members: size form_field
+
+Compound Binary Fields
+~~~~~~~~~~~~~~~~~~~~~~
+
+    These fields allow data to be nested. If your data may include several
+    items with the same type, you can use a :class:`BinaryFieldList` to
+    manage them. If you want to re-use a set of items (or nest a more
+    complicated data type in a :class:`BinaryFieldList`), you can use a
+    :class:`BinaryFormField` to do so.
+
     .. autoclass:: BinaryFieldList
         :members: size form_field
     .. autoclass:: BinaryFormField
