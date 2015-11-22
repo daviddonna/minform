@@ -92,12 +92,34 @@ class BinaryItem(six.with_metaclass(abc.ABCMeta, object)):
         pass  # pragma: no cover
 
     def pack_into(self, buffer, offset, data, order=None):
+        """
+        Pack data from this item into an existing buffer.
+
+        Parameters:
+            buffer: a mutable byte buffer (e.g. ``bytearray``), into which the
+                data will be written
+            offset (int): the starting index of *buffer* to write data to
+            data: see :meth:`pack`
+            order: see :meth:`pack`
+        """
+
         if len(buffer[offset:offset+self.size]) < self.size:
             raise ValueError("Need at least {0} bytes to pack {1}".format(
                 self.size, data))
         buffer[offset:offset+self.size] = self.pack(data, order=order)
 
     def unpack_from(self, buffer, offset=0, order=None):
+        """
+        Unpack data from a specific portion of a buffer.
+
+        Parameters:
+            buffer: a byte buffer (e.g. a ``bytes`` object) that contains the
+                serialized data at some offset
+            offset (int): the index in *buffer* where the serialized data
+                starts
+            order: see :meth:`unpack`
+        """
+
         if offset == -self.size:
             buf = buffer[offset:]
         else:
@@ -277,6 +299,17 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
         return bytes(buf)
 
     def pack_into(self, buffer, offset, order=None):
+        """
+        Pack data from this item into an existing buffer.
+
+        Parameters:
+            buffer: a mutable byte buffer (e.g. ``bytearray``), into which the
+                data will be written
+            offset (int): the starting index of *buffer* to write data to
+            data: see :meth:`pack`
+            order: see :meth:`pack`
+        """
+
         if len(buffer[offset:offset+self.size]) < self.size:
             raise ValueError("Need at least {0} bytes to pack {1}".format(
                 self.size, self.data))
@@ -284,6 +317,17 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
 
     @classmethod
     def unpack_from(cls, buffer, offset=0, order=None):
+        """
+        Unpack data from a specific portion of a buffer.
+
+        Parameters:
+            buffer: a byte buffer (e.g. a ``bytes`` object) that contains the
+                serialized data at some offset
+            offset (int): the index in *buffer* where the serialized data
+                starts
+            order: see :meth:`unpack`
+        """
+
         if offset == -cls.size:
             buf = buffer[offset:]
         else:
