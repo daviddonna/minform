@@ -38,7 +38,7 @@ serialize into flat buffers.
         """
         This is taking a turn for campy criminality.
         """
-        riches = minforms.Int16Field()
+        riches = minform.Int16Field()
         goons = minform.BinaryFieldList(Person, max_entries=4, length=minform.EXPLICIT)
 
     squad = MyBigBadForm(riches=55223, goons=[

@@ -66,7 +66,7 @@ server-friendly.
 What can Minform do for me?
 ---------------------------
 
-Let's build a Minforms form to handle incoming sensor data.
+Let's build a Minform form to handle incoming sensor data.
 
 .. code-block:: python
 
