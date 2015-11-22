@@ -82,6 +82,9 @@ Let's build a Minform form to handle incoming sensor data.
         temperature = Int16Field()
         pings = UInt16Field()
         battery_pct = UInt8Field()
+
+        # We could cut the serialized record off three bytes early, but let's
+        # say we want to break on four-byte word boundaries for reasons.
         padding = BlankBytes(3)
 
 Here's the C code that will serialize your structure:
