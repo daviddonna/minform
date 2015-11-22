@@ -73,12 +73,12 @@ class BinaryItem(six.with_metaclass(abc.ABCMeta, object)):
         pass  # pragma: no cover
 
     @abc.abstractmethod
-    def unpack(self, buf, order=None):
+    def unpack(self, buffer, order=None):
         """
         Deserialize packed bytes into data.
 
         Parameters:
-            buf: bytes object of length :attr:`size`
+            buffer: bytes object of length :attr:`size`
             order: :ref:`byte order <byte-order>` constant for integer
                 endianness. *If* :attr:`self.order <order>` *is set, this
                 parameter will be ignored.*
@@ -87,7 +87,7 @@ class BinaryItem(six.with_metaclass(abc.ABCMeta, object)):
             data stored in the buffer
 
         Raises:
-            ValueError: if *buf* has the wrong size.
+            ValueError: if *buffer* has the wrong size.
         """
         pass  # pragma: no cover
 
@@ -121,13 +121,13 @@ class BinaryItem(six.with_metaclass(abc.ABCMeta, object)):
         """
 
         if offset == -self.size:
-            buf = buffer[offset:]
+            buffer = buffer[offset:]
         else:
-            buf = buffer[offset:offset+self.size]
-        if len(buf) < self.size:
+            buffer = buffer[offset:offset+self.size]
+        if len(buffer) < self.size:
             raise ValueError("{0} is too small for a {1}".format(
-                buf, self.__class__.__name__))
-        return self.unpack(buf, order=order)
+                buffer, self.__class__.__name__))
+        return self.unpack(buffer, order=order)
 
 
 class BlankBytes(BinaryItem):
@@ -160,7 +160,7 @@ class BlankBytes(BinaryItem):
     def pack(self, data, order=None):
         return b'\0' * self.size
 
-    def unpack(self, buf, order=None):
+    def unpack(self, buffer, order=None):
         return None
 
 
@@ -236,10 +236,10 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
     order = None
 
     @classmethod
-    def unpack(cls, buf, order=None):
+    def unpack(cls, buffer, order=None):
         """
         Parameters:
-            buf (bytes): bytes object of length :attr:`size`
+            buffer (bytes): bytes object of length :attr:`size`
             order: :ref:`byte order <byte-order>` constant for integer
                 endianness. *If* :attr:`order` *is set, this parameter
                 will be ignored.*
@@ -248,12 +248,12 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
             BinaryForm: form bound to the data stored in the buffer
 
         Raises:
-            ValueError: if :paramref:`~unpack.buf` has the wrong size.
+            ValueError: if :paramref:`~unpack.buffer` has the wrong size.
         """
 
-        if len(buf) != cls.size:
+        if len(buffer) != cls.size:
             raise ValueError('Recieved {0} bytes; expected {1}'.format(
-                len(buf), cls.size))
+                len(buffer), cls.size))
         order = order or cls.order or ''
         data = {}
         start = 0
@@ -261,9 +261,9 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
         for item in cls._binary_items:
             stop = start + item.size
             if item.form_field is not None:
-                data[item.name] = item.unpack(buf[start:stop], order=order)
+                data[item.name] = item.unpack(buffer[start:stop], order=order)
             else:
-                item.unpack(buf[start:stop])
+                item.unpack(buffer[start:stop])
             start = stop
 
         return cls(data=data)
@@ -284,19 +284,19 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
         order = order or self.order or ''
 
         size = sum(item.size for item in self._binary_items)
-        buf = bytearray(size)
+        buffer = bytearray(size)
         start = 0
 
         for item in self._binary_items:
             stop = start + item.size
             if item.form_field is not None:
                 value = self.data[item.name]
-                buf[start:stop] = item.pack(value, order=order)
+                buffer[start:stop] = item.pack(value, order=order)
             else:
-                buf[start:stop] = item.pack(None)
+                buffer[start:stop] = item.pack(None)
             start = stop
 
-        return bytes(buf)
+        return bytes(buffer)
 
     def pack_into(self, buffer, offset, order=None):
         """
@@ -329,10 +329,10 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
         """
 
         if offset == -cls.size:
-            buf = buffer[offset:]
+            buffer = buffer[offset:]
         else:
-            buf = buffer[offset:offset+cls.size]
-        if len(buf) < cls.size:
+            buffer = buffer[offset:offset+cls.size]
+        if len(buffer) < cls.size:
             raise ValueError("{0} is too small for a {1}".format(
-                buf, cls.__name__))
-        return cls.unpack(buf, order=order)
+                buffer, cls.__name__))
+        return cls.unpack(buffer, order=order)

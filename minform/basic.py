@@ -34,12 +34,12 @@ class BasicBinaryField(core.BinaryField):
     def pack_data(self, data, order):
         return struct.pack(order + self.pack_string, data)
 
-    def unpack(self, buf, order=None):
+    def unpack(self, buffer, order=None):
         order = self.order or order or ''
-        return self.unpack_data(buf, order)
+        return self.unpack_data(buffer, order)
 
-    def unpack_data(self, buf, order):
-        return struct.unpack(order + self.pack_string, buf)[0]
+    def unpack_data(self, buffer, order):
+        return struct.unpack(order + self.pack_string, buffer)[0]
 
 
 class CharField(BasicBinaryField):
@@ -244,29 +244,29 @@ class BytesField(BasicBinaryField):
         super(BytesField, self).__init__(label, validators, order, **kwargs)
 
     def pack_data(self, data, order):
-        buf = bytearray(self.size)
+        buffer = bytearray(self.size)
         length = len(data)
         if self.length == core.EXPLICIT:
             pack_length_string = order + self.length_field.pack_string
-            struct.pack_into(pack_length_string, buf, 0, length)
+            struct.pack_into(pack_length_string, buffer, 0, length)
             start = self.length_field.size
         else:
             start = 0
-        buf[start:start+length] = data
-        return buf
+        buffer[start:start+length] = data
+        return buffer
 
-    def unpack_data(self, buf, order):
+    def unpack_data(self, buffer, order):
         if self.length == core.EXPLICIT:
             unpack_length_string = order + self.length_field.pack_string
-            length = struct.unpack_from(unpack_length_string, buf)[0]
+            length = struct.unpack_from(unpack_length_string, buffer)[0]
             if length > self.max_length:
                 message = "Buffer cannot contain {0} bytes.".format(length)
                 raise ValueError(message)
-            data_buf = buf[self.length_field.size:]
+            data_buffer = buffer[self.length_field.size:]
         else:
             length = self.max_length
-            data_buf = buf
-        data = data_buf[:length]
+            data_buffer = buffer
+        data = data_buffer[:length]
 
         if self.length == core.AUTOMATIC:
             data = data.rstrip(b'\x00')

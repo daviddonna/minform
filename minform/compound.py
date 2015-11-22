@@ -54,26 +54,26 @@ class BinaryFieldList(core.BinaryField):
 
     def pack(self, data, order=None):
         order = order or self.order
-        buf = bytearray(self.size)
+        buffer = bytearray(self.size)
 
         # If the length is EXPLICIT, prepend an item count so that we will
         # know how many items to read.
 
         if self.length == core.EXPLICIT:
             packed_count = self.count_field.pack(len(data))
-            buf[0:self.count_field.size] = packed_count
+            buffer[0:self.count_field.size] = packed_count
             start = self.count_field.size
         else:
             start = 0
 
         for item in data:
             stop = start + self.inner_field.size
-            buf[start:stop] = self.inner_field.pack(item, order)
+            buffer[start:stop] = self.inner_field.pack(item, order)
             start = stop
 
-        return buf
+        return buffer
 
-    def unpack(self, buf, order=None):
+    def unpack(self, buffer, order=None):
         order = order or self.order
         data = []
 
@@ -81,7 +81,7 @@ class BinaryFieldList(core.BinaryField):
         # detect how many items we should read.
 
         if self.length == core.EXPLICIT:
-            count_chunk = buf[0:self.count_field.size]
+            count_chunk = buffer[0:self.count_field.size]
             data_length = self.count_field.unpack(count_chunk)
             if data_length > self.max_entries:
                 raise ValueError("Unreasonable count of {0} for {1}".format(
@@ -93,7 +93,7 @@ class BinaryFieldList(core.BinaryField):
 
         for i in range(data_length):
             stop = start + self.inner_field.size
-            chunk = buf[start:stop]
+            chunk = buffer[start:stop]
             data.append(self.inner_field.unpack(chunk, order))
             start = stop
 
@@ -132,6 +132,6 @@ class BinaryFormField(core.BinaryField):
         order = order or self.order
         return self.form_class(data=data).pack(order)
 
-    def unpack(self, buf, order=None):
+    def unpack(self, buffer, order=None):
         order = order or self.order
-        return self.form_class.unpack(buf, order=order).data
+        return self.form_class.unpack(buffer, order=order).data
