@@ -56,6 +56,9 @@ class BinaryFieldList(core.BinaryField):
         order = order or self.order
         buf = bytearray(self.size)
 
+        # If the length is EXPLICIT, prepend an item count so that we will
+        # know how many items to read.
+
         if self.length == core.EXPLICIT:
             packed_count = self.count_field.pack(len(data))
             buf[0:self.count_field.size] = packed_count
@@ -73,6 +76,9 @@ class BinaryFieldList(core.BinaryField):
     def unpack(self, buf, order=None):
         order = order or self.order
         data = []
+
+        # If the length is EXPLICIT, use the prepended item count indicator to
+        # detect how many items we should read.
 
         if self.length == core.EXPLICIT:
             count_chunk = buf[0:self.count_field.size]
@@ -100,10 +106,11 @@ class BinaryFormField(core.BinaryField):
     Nest one :class:`~minform.BinaryForm` inside another.
 
     Attributes:
-        form_class: The :class:`~minform.BinaryForm` that describes the
-            contents of this field. A :class:`BinaryFormField` instance will
-            have the same :attr:`~BinaryItem.size` as its :attr:`form_class`,
-            and will pack and unpack data in the same ways.
+        form_class: The :class:`~minform.BinaryForm` subclass that describes
+            the contents of this field. A :class:`BinaryFormField` instance
+            will have the same :attr:`~BinaryItem.size` as its
+            :attr:`form_class`, and will pack and unpack data in the same
+            ways.
         form_field: A :class:`wtforms.fields.FormField`
             instance.
     """
