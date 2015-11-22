@@ -183,8 +183,13 @@ class TestBinaryFormField(util.FormTest):
            b'\0\0\0\x01\x02\x03' +
            b'ab\x01\x12\x34')
 
+    size = len(buf)
+
     class Form(minform.BinaryForm):
         f = minform.BinaryFormField(F2, order=minform.BIG_ENDIAN)
+
+    def test_form_has_proper_size(self):
+        assert self.Form.size == self.size
 
     def test_form_can_be_constructed(self):
         form = self.Form(data=self.data)

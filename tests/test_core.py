@@ -175,8 +175,7 @@ class TestBinaryForm(unittest.TestCase):
     def test_pack_into_succeeds_with_sufficient_buffer_from_end(self):
         m = self.Form(data=self.data)
         buf = bytearray(self.size + 1)
-        with pytest.raises(ValueError):
-            m.pack_into(buf, -self.size)
+        m.pack_into(buf, -self.size)
 
     def test_unpack_from_succeeds_for_same_size_buffer(self):
         form = self.Form.unpack_from(self.buf, 0)

@@ -107,11 +107,15 @@ class BinaryItem(six.with_metaclass(abc.ABCMeta, object)):
             This feature is not tested, and presumed broken.
         """
 
-        if offset != -self.size:
-            if len(buffer[offset:offset+self.size]) < self.size:
-                raise ValueError("Need at least {0} bytes to pack {1}".format(
-                    self.size, data))
-        buffer[offset:offset+self.size] = self.pack(data, order=order)
+        if offset == -self.size:
+            stop_index = None
+        else:
+            stop_index = offset + self.size
+
+        if len(buffer[offset:stop_index]) < self.size:
+            raise ValueError("Need at least {0} bytes to pack {1}".format(
+                self.size, data))
+        buffer[offset:stop_index] = self.pack(data, order=order)
 
     def unpack_from(self, buffer, offset=0, order=None):
         """
@@ -130,13 +134,14 @@ class BinaryItem(six.with_metaclass(abc.ABCMeta, object)):
         """
 
         if offset == -self.size:
-            buffer = buffer[offset:]
+            stop_index = None
         else:
-            buffer = buffer[offset:offset+self.size]
-        if len(buffer) < self.size:
+            stop_index = offset + self.size
+
+        if len(buffer[offset:stop_index]) < self.size:
             raise ValueError("{0} is too small for a {1}".format(
                 buffer, self.__class__.__name__))
-        return self.unpack(buffer, order=order)
+        return self.unpack(buffer[offset:stop_index], order=order)
 
 
 class BlankBytes(BinaryItem):
@@ -323,10 +328,15 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
             This feature is not tested, and presumed broken.
         """
 
-        if len(buffer[offset:offset+self.size]) < self.size:
+        if offset == -self.size:
+            stop_index = None
+        else:
+            stop_index = offset + self.size
+
+        if len(buffer[offset:stop_index]) < self.size:
             raise ValueError("Need at least {0} bytes to pack {1}".format(
                 self.size, self.data))
-        buffer[offset:offset+self.size] = self.pack(order=order)
+        buffer[offset:stop_index] = self.pack(order=order)
 
     @classmethod
     def unpack_from(cls, buffer, offset=0, order=None):
@@ -346,10 +356,11 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
         """
 
         if offset == -cls.size:
-            buffer = buffer[offset:]
+            stop_index = None
         else:
-            buffer = buffer[offset:offset+cls.size]
-        if len(buffer) < cls.size:
+            stop_index = offset + cls.size
+
+        if len(buffer[offset:stop_index]) < cls.size:
             raise ValueError("{0} is too small for a {1}".format(
-                buffer, cls.__name__))
-        return cls.unpack(buffer, order=order)
+                len(buffer[offset:stop_index]), cls.__name__))
+        return cls.unpack(buffer[offset:stop_index], order=order)
