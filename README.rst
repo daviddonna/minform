@@ -90,9 +90,12 @@ Here's the C code that will serialize your structure:
 
     #include <string.h>
 
-    void serialize(char *send_buffer, struct sensor_data data) {
-        memcpy(send_buffer, &data, sizeof(struct sensor_data));
-    }
+    char send_buffer[36];
+    struct sensor_data data;
+
+    // ...
+
+    memcpy(send_buffer, &data, sizeof(data));
 
 And here's the Python that will receive it:
 
