@@ -61,8 +61,12 @@ class TestBinaryItem(unittest.TestCase):
     def test_pack_into_succeeds_with_sufficient_buffer_from_end(self):
         m = self.MyItem()
         buf = bytearray(5)
-        with pytest.raises(ValueError):
-            m.pack_into(buf, -4, None)
+        m.pack_into(buf, -4, None)
+
+    def test_pack_into_succeeds_with_large_buffer_from_end(self):
+        m = self.MyItem()
+        buf = bytearray(5)
+        m.pack_into(buf, -5, None)
 
     def test_unpack_from_works_for_same_size_buffer(self):
         m = self.MyItem()

@@ -107,9 +107,10 @@ class BinaryItem(six.with_metaclass(abc.ABCMeta, object)):
             This feature is not tested, and presumed broken.
         """
 
-        if len(buffer[offset:offset+self.size]) < self.size:
-            raise ValueError("Need at least {0} bytes to pack {1}".format(
-                self.size, data))
+        if offset != -self.size:
+            if len(buffer[offset:offset+self.size]) < self.size:
+                raise ValueError("Need at least {0} bytes to pack {1}".format(
+                    self.size, data))
         buffer[offset:offset+self.size] = self.pack(data, order=order)
 
     def unpack_from(self, buffer, offset=0, order=None):
