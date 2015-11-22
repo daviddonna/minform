@@ -163,9 +163,9 @@ serialize into flat buffers.
     ])
     assert squad.pack() == (b'\xd7\xb7' +                                  # riches
                             b'\x03' +                                      # goons prefix
-                            b'Joey\0\0\0\0\0\0Schmoey\0\0\0\x32' +         # goons[0]
-                            b'Manny\0\0\0\0\0The Man\0\0\0\x40' +          # goons[1]
-                            b'Gerta\0\0\0\0\0Goethe\0\0\0\0\x52' +         # goons[2]
+                            b'Joey\0\0\0\0\0\0Schmoey\0\0\0\x20' +         # goons[0]
+                            b'Manny\0\0\0\0\0The Man\0\0\0\x28' +          # goons[1]
+                            b'Gerta\0\0\0\0\0Goethe\0\0\0\0\x34' +         # goons[2]
                             b'\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0') # goons[3]
 
 Even with an entire set of blank bytes for ``goons[3]``, that's 87 bytes, vs
