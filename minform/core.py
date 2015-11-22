@@ -101,10 +101,6 @@ class BinaryItem(six.with_metaclass(abc.ABCMeta, object)):
             offset (int): the starting index of *buffer* to write data to
             data: see :meth:`pack`
             order: see :meth:`pack`
-
-        .. warning::
-
-            This feature is not tested, and presumed broken.
         """
 
         if offset == -self.size:
@@ -127,10 +123,6 @@ class BinaryItem(six.with_metaclass(abc.ABCMeta, object)):
             offset (int): the index in *buffer* where the serialized data
                 starts
             order: see :meth:`unpack`
-
-        .. warning::
-
-            This feature is not tested, and presumed broken.
         """
 
         if offset == -self.size:
@@ -322,10 +314,6 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
             offset (int): the starting index of *buffer* to write data to
             data: see :meth:`pack`
             order: see :meth:`pack`
-
-        .. warning::
-
-            This feature is not tested, and presumed broken.
         """
 
         if offset == -self.size:
@@ -349,10 +337,6 @@ class BinaryForm(six.with_metaclass(BinaryFormMeta, wtforms.Form)):
             offset (int): the index in *buffer* where the serialized data
                 starts
             order: see :meth:`unpack`
-
-        .. warning::
-
-            This feature is not tested, and presumed broken.
         """
 
         if offset == -cls.size:
