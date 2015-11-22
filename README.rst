@@ -82,7 +82,6 @@ Let's build a Minform form to handle incoming sensor data.
         temperature = Int16Field()
         pings = UInt16Field()
         battery_pct = UInt8Field()
-        maintainer = BytesField(max_length=3, length=FIXED)
         padding = BlankBytes(3)
 
 Here's the C code that will serialize your structure:
