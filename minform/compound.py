@@ -9,29 +9,19 @@ class BinaryFieldList(core.BinaryField):
     """
     Store a homogeneous list of information.
 
-    .. attribute:: inner_field
+    Attributes:
+        inner_field: A :class:`~wtforms.BinaryField` instance.
+        max_entries: The maximum number of items that can be stored in the
+            list.
+        length: A :ref:`length` constant.
+        size: If :attr:`length` is :data:`minform.FIXED`, *size* will be equal
+            to ``max_size * inner_field.length``.
 
-        A :class:`~wtforms.BinaryField`
-
-    .. attribute:: max_entries
-
-        The maximum number of items that can be stored in the list.
-
-    .. attribute:: length
-
-        A :ref:`length` constant.
-
-    .. attribute:: size
-
-        If :attr:`length` is :data:`minform.FIXED`, *size* will be equal to
-        ``max_size * inner_field.length``.
-
-        If :attr:`length` is :data:`minform.EXPLICIT`, *size* will be
-        ``prefix_length + (max_size * inner_field.length)``. The value of
-        ``prefix_length`` follows the documentation for :ref:`length`.
-
-    .. attribute:: form_field
-        :annotation: : wtforms.FieldList
+            If :attr:`length` is :data:`minform.EXPLICIT`, *size* will be
+            ``prefix_length + (max_size * inner_field.length)``. The value of
+            ``prefix_length`` follows the documentation for :ref:`length`.
+        form_field: A :class:`wtforms.fields.FieldList`
+            instance.
     """
 
     def __init__(self, inner_field, label='', validators=None,
@@ -109,15 +99,13 @@ class BinaryFormField(core.BinaryField):
     """
     Nest one :class:`~minform.BinaryForm` inside another.
 
-    .. attribute:: form_class
-
-        The :class:`~minform.BinaryForm` that describes the contents of this
-        field. A :class:`BinaryFormField` instance will have the same
-        :attr:`~BinaryItem.size` as its :attr:`form_class`, and will pack and
-        unpack data in the same ways.
-
-    .. attribute:: form_field
-        :annotation: : wtforms.FormField
+    Attributes:
+        form_class: The :class:`~minform.BinaryForm` that describes the
+            contents of this field. A :class:`BinaryFormField` instance will
+            have the same :attr:`~BinaryItem.size` as its :attr:`form_class`,
+            and will pack and unpack data in the same ways.
+        form_field: A :class:`wtforms.fields.FormField`
+            instance.
     """
 
     def __init__(self, form_class, label='', validators=None, order=None,

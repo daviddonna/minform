@@ -11,13 +11,25 @@ API
     that project.
 
     Minform provides a :class:`BinaryForm` class, which subclasses from
-    :class:`wtforms.Form <wtforms.form.Form>`. Instead of subclassing
-    :class:`~wtforms.form.Form` with :class:`wtforms.Field
-    <wtforms.fields.Field>` instances as class variables, you need to subclass
-    :class:`BinaryForm`, and give it :class:`BinaryItem` instances as class
-    variables. The result will be a :class:`~wtforms.form.Form` with
-    additional :meth:`~BinaryForm.pack` and :meth:`~BinaryForm.unpack`
-    methods.
+    :class:`wtforms.form.Form`. Instead of subclassing
+    :class:`~wtforms.form.Form` with :class:`wtforms.fields.Field` instances
+    as class variables, you need to subclass :class:`BinaryForm`, and give it
+    :class:`BinaryItem` instances as class variables. The result will be a
+    :class:`~wtforms.form.Form` with additional :meth:`~BinaryForm.pack` and
+    :meth:`~BinaryForm.unpack` methods.
+
+    .. note::
+
+        This documentation will often refer to ``bytes`` objects. This mostly
+        applies to Python 3; if you're using Python 2, you can read ``bytes``
+        as ``str``.
+
+        ============== ============== ===================
+        Python version raw bytes type unicode string type
+        ============== ============== ===================
+        Python 2       ``str``        ``unicode``
+        Python 3       ``bytes``      ``str``
+        ============== ============== ===================
 
 Base Classes
 ------------
@@ -67,9 +79,10 @@ Custom BinaryItems
     include:
 
     * A :attr:`~BinaryItem.size` attribute. This is used to determine how many
-      bytes will be required by the ``unpack`` method, and how many will be
-      expected to be returned by the ``pack`` method. This attribute is
-      required even if you write custom ``pack`` and ``unpack`` methods that
+      bytes will be required by the :meth:`~BinaryItem.unpack` method, and how
+      many will be expected to be returned by the :meth:`~BinaryItem.pack`
+      method. This attribute is required even if you write custom
+      :meth:`~BinaryItem.pack` and :meth:`BinaryItem.unpack` methods that
       don't refer to it!
 
     * A :meth:`~BinaryItem.pack` method. The type of
@@ -105,21 +118,30 @@ Length
 Byte order
 ----------
 
-.. autodata:: NATIVE
-    :annotation:
-.. autodata:: LITTLE_ENDIAN
-    :annotation:
-.. autodata:: BIG_ENDIAN
-    :annotation:
-.. autodata:: NETWORK
-    :annotation:
+    .. autodata:: NATIVE
+        :annotation:
+    .. autodata:: LITTLE_ENDIAN
+        :annotation:
+    .. autodata:: BIG_ENDIAN
+        :annotation:
+    .. autodata:: NETWORK
+        :annotation:
 
-.. note::
+    .. note::
 
-    Setting the ``order`` property on a :class:`BinaryForm
-    <minform.BinaryForm>` or :class:`BinaryItem <minform.BinaryItem>` will
-    override the ``order`` argument of :meth:`pack <minform.BinaryItem.pack>`
-    and :meth:`unpack <minform.BinaryItem.unpack>` methods. For clarity, we
-    recommend that you use **either** the attribute **or** the :meth:`pack
-    <minform.BinaryItem.pack>`/:meth:`unpack <minform.BinaryItem.unpack>`
-    argument.
+        Setting the :attr:`~BinaryItem.order` property on a
+        :class:`BinaryForm` or :class:`BinaryItem <minform.BinaryItem>` will
+        override the *order* argument of :meth:`~minform.BinaryItem.pack` and
+        :meth:`~minform.BinaryItem.unpack` methods. For clarity, we recommend
+        that you use **either** the attribute **or** the
+        :meth:`~minform.BinaryItem.pack`/:meth:`~minform.BinaryItem.unpack`
+        argument.
+
+        Likewise, the :attr:`~BinaryItem.order` of a :class:`BinaryItem` will
+        override the :attr:`~BinaryItem.order` of the form or field that
+        contains it.
+
+        You can think of it as the order cascading down from the
+        :paramref:`BinaryForm.unpack` *order* argument, through the class, to
+        each of that form's items, and easy nested item, until it is
+        overridden by an :attr:`~BinaryItem.order` attribute.

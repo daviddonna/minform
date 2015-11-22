@@ -41,11 +41,9 @@ class CharField(BasicBinaryField):
     Store a single byte as a one-character ``str`` (in Python 2) or ``bytes``
     object (in Python 3).
 
-    .. attribute:: size
-        :annotation: = 1
-
-    .. attribute:: form_field
-        :annotation: : wtforms.StringField
+    Attributes:
+        size: always ``1``
+        form_field: A :class:`wtforms.fields.StringField` instance.
     """
 
     form_field_class = wtforms.StringField
@@ -59,11 +57,9 @@ class BinaryBooleanField(BasicBinaryField):
     Store either ``True`` or ``False`` as ``b'\\x01'`` or ``b'\\x00'``
     (respectively).
 
-    .. attribute:: size
-        :annotation: = 1
-
-    .. attribute:: form_field
-        :annotation: : wtforms.BooleanField
+    Attributes:
+        size: always ``1``
+        form_field: A :class:`wtforms.fields.BooleanField` instance.
     """
 
     form_field_class = wtforms.BooleanField
@@ -90,8 +86,8 @@ class BinaryIntegerField(BasicBinaryField):
     :class:`UInt64Field` 8    0               2\ :sup:`64` - 1
     ==================== ==== =============== ================
 
-    .. attribute:: form_field
-        :annotation: : wtforms.IntegerField
+    Attributes:
+        form_field: A :class:`wtforms.fields.Integerfield` instance.
     """
 
     form_field_class = wtforms.IntegerField
@@ -162,11 +158,9 @@ class Float32Field(BasicBinaryField):
     """
     Store a ``float`` in four bytes.
 
-    .. attribute:: size
-        :annotation: = 4
-
-    .. attribute:: form_field
-        :annotation: : wtforms.FloatField
+    Attributes:
+        size: Always ``4``.
+        form_field: A :class:`wtforms.fields.FloatField` instance.
     """
 
     form_field_class = wtforms.FloatField
@@ -178,11 +172,9 @@ class Float64Field(BasicBinaryField):
     """
     Store a ``float`` in eight bytes.
 
-    .. attribute:: size
-        :annotation: = 8
-
-    .. attribute:: form_field
-        :annotation: : wtforms.FloatField
+    Attributes:
+        size: Always ``8``.
+        form_field: A :class:`wtforms.fields.FloatField` instance.
     """
 
     form_field_class = wtforms.FloatField
@@ -194,29 +186,24 @@ class BytesField(BasicBinaryField):
     """
     Store *N* bytes.
 
-    .. attribute:: max_length
+    Attributes:
+        max_length: Maximum number of bytes in the stored string. Note that
+            this may not be equal to :attr:`size`.
 
-        Maximum number of bytes in the stored string. Note that this may not
-        be equal to :attr:`size`.
+        size: The :attr:`size` of a :class:`BytesField` with ``max_length``
+            *N* varies based on the *length* argument used to construct it.
 
-    .. attribute:: size
+            If *length* is :attr:`~minform.FIXED` or
+            :attr:`~minform.AUTOMATIC`, ``size`` will be *N*.
 
-        The :attr:`size` of a :class:`BytesField` with ``max_length`` *N*
-        varies based on the *length* argument used to construct it.
+            If *length* is :attr:`~minform.EXPLICIT`, there will be one or
+            more extra bytes at the beginning of the packed data, which store
+            the number of bytes used by the string. This will be the smallest
+            number of bytes needed to store a number up to ``max_length``. So,
+            ``size`` can be *N+1*, *N+2*, *N+4*, or *N+8*. (For more
+            information, see the documentation for :data:`~minform.EXPLICIT`.)
 
-        If *length* is :attr:`~minform.FIXED` or :attr:`~minform.AUTOMATIC`,
-        ``size`` will be *N*.
-
-        If *length* is :attr:`~minform.EXPLICIT`, there will be one or more
-        extra bytes at the beginning of the packed data, which store the
-        number of bytes used by the string. This will be the smallest number
-        of bytes needed to store a number up to ``max_length``. So, ``size``
-        can be *N+1*, *N+2*, *N+4*, or *N+8*. (For more information, see the
-        documentation for :data:`~minform.EXPLICIT`.)
-
-    .. attribute:: form_field
-        :annotation: : wtforms.StringField
-
+        form_field: A :class:`wtforms.fields.StringField` instance.
     """
 
     form_field_class = wtforms.StringField
@@ -286,13 +273,16 @@ def store_numbers_up_to(n, signed=False, **kwargs):
 
     If the number is too big to store, a ``ValueError`` will be raised.
 
-    :param n: The highest number that you expect to need to store (must be at
-        most a 64-bit integer).
-    :param signed: Return a field that can store negative numbers.
-    :param kwargs: Additional arguments get passed into the binary field
-        constructor.
-    :return: A :class:`BinaryIntegerField` that can store numbers up to at
-        least ``n``.
+    Parameters:
+        n: The highest number that you expect to need to store (must be at
+            most a 64-bit integer).
+        signed: Return a field that can store negative numbers.
+        kwargs: Additional arguments get passed into the binary field
+            constructor.
+
+    Returns:
+        BinaryIntegerField: A :class:`BinaryIntegerField` that can store
+            numbers up to at least ``n``.
     """
 
     if signed:
