@@ -11,24 +11,106 @@ The declarative ease of
 footprint of
 `struct <https://docs.python.org/3/library/struct.html>`_.
 
+For more detailed examples, read the full docs at
+https://minform.readthedocs.org.
+
 Why does Minform exist?
 -----------------------
 
-Because I wanted to write declarative data schemas, like Google's
-`protocol buffers <https://developers.google.com/protocol-buffers/>`_,
-but with a little more power on the Python end.
+Let's talk about data size.
+
+Say you have a fleet of devices with cell modems that report to a web server.
+Here's an example of a data packet you might :
+
+.. code-block:: c
+
+    struct sensor_data {
+        char version[8];
+        char serial[12];
+        int32_t latitude;    // fixed-point * 100000
+        int32_t longitude;   // fixed-point * 100000
+        int16_t temperature; // fixed-point * 100
+        uint16_t pings;
+        uint8_t battery_pct;
+    };
+
+Let's say they're reporting their data in JSON format, because that's lighter
+than XML but still coherent to most server frameworks. Here's a data packet:
+
+.. code-block:: javascript
+
+    {
+        "version": "1.0",
+        "serial": "DEADBEEF",
+        "latitude": 4071270,
+        "longitude": -7400590,
+        "temperature": 3200,
+        "pings": 123,
+        "battery_pct": 62
+    }
+
+If you take out all the whitespace, that's **144 bytes**. (ASCII encoding).
+Maybe that's all you need, but maybe you need to store billions or trillions
+of these little guys. Worse, maybe you need to pay through the tear ducts for
+cellular data. It would be nice for that data to be smaller, and to be
+predictably sized.
+
+Besides, let's face it: serializing to JSON from C is a pain in the patoot.
+Depending on the library, you could be looking at ten or twenty lines of code
+(or a truly epic ``sprintf``), just to serialize a record.
+
+On the Python side, we can probably just use a form library like WTForms to
+validate incoming data, but we've already paid a price to make that data
+server-friendly.
 
 What can Minform do for me?
 ---------------------------
 
-Minform can add a lightweight binary protocol to your WTForms forms, or
-add validation and web form input to your binary protocols.
+Let's build a Minforms form to handle incoming sensor data.
 
-How does Minform work?
-----------------------
+.. code-block:: python
 
-An awful lot like WTForms: you subclass ``minform.BinaryForm``, and add
-``BinaryField``\ s as class properties. Here's a quick example:
+    from minform import *
+
+    class SensorData(BinaryForm):
+
+        order = LITTLE_ENDIAN  # let's say our devices are little-endian
+        version = BytesField(max_length=8, length=AUTOMATIC)
+        serial = BytesField(max_length=12, length=AUTOMATIC)
+        latitude = Int32Field()
+        longitude = Int32Field()
+        temperature = Int16Field()
+        pings = UInt16Field()
+        battery_pct = UInt8Field()
+        maintainer = BytesField(max_length=3, length=FIXED)
+        padding = BlankBytes(3)
+
+Here's the C code that will serialize your structure:
+
+.. code-block:: c
+
+    #include <string.h>
+
+    void serialize(char *send_buffer, struct sensor_data data) {
+        memcpy(send_buffer, &data, sizeof(struct sensor_data));
+    }
+
+And here's the Python that will receive it:
+
+.. code-block:: python
+
+    form = SensorData.unpack(serialized_data)
+
+That serialized record is **36 bytes**. 36 on the wire, 36 in a file. You may
+need to tweak the form definition, depending on your C compiler and the target
+architecture, but Minforms gives you the tools to cope with padding bytes, and
+even mixed byte ordering.
+
+Let's fill in some gaps
+-----------------------
+
+Minforms are an awful lot like WTForms: you subclass ``minform.BinaryForm``,
+and add ``BinaryField``\ s as class properties. Here's another quick example:
 
 .. code:: python
 
@@ -71,7 +153,7 @@ serialize into flat buffers.
         """
         This is taking a turn for campy criminality.
         """
-        riches = minforms.Int16Field()
+        riches = minform.Int16Field()
         goons = minform.BinaryFieldList(Person, max_entries=4, length=minform.EXPLICIT)
 
     squad = MyBigBadForm(riches=55223, goons=[
@@ -86,5 +168,5 @@ serialize into flat buffers.
                             b'Gerta\0\0\0\0\0Goethe\0\0\0\0\x52' +         # goons[2]
                             b'\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0') # goons[3]
 
-For more detailed examples, read the full docs at
-https://minform.readthedocs.org.
+Even with an entire set of blank bytes for ``goons[3]``, that's 87 bytes, vs
+185 for the JSON representation.
