@@ -20,7 +20,7 @@ Why does Minform exist?
 Let's talk about data size.
 
 Say you have a fleet of devices with cell modems that report to a web server.
-Here's an example of a data packet you might :
+Here's an example of a data packet struct you might use:
 
 .. code-block:: c
 
