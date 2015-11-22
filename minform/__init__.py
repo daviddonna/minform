@@ -3,7 +3,7 @@
 
 __author__ = 'David Donna'
 __email__ = 'davidadonna@gmail.com'
-__version__ = '0.1.3'
+__version__ = '0.2.0'
 
 from .core import *
 from .basic import *
