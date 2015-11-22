@@ -7,18 +7,25 @@ from . import core
 
 class BasicBinaryField(core.BinaryField):
 
+    # Some BinaryFields will have inherent value restrictions, based on the
+    # limitations of the serialized form. For example, a UInt8Field cannot
+    # store numbers above 0xFF. When the class is instantiated, these
+    # validators will be silently added to any validators provided by the
+    # constructor.
     initial_validators = []
 
     def __init__(self, label='', validators=None, order=None, **kwargs):
         core.BinaryItem.__init__(self)
         self.size = struct.calcsize(self.pack_string)
         self.order = order
-        all_validators = list(self.initial_validators)
+
+        # Clone the initial_validators list to avoid mutating a class
+        # variable.
+        all_vldtrs = list(self.initial_validators)
         if validators is not None:
-            all_validators.extend(validators)
-        self.form_field = self.form_field_class(label,
-                                                all_validators,
-                                                **kwargs)
+            all_vldtrs.extend(validators)
+
+        self.form_field = self.form_field_class(label, all_vldtrs, **kwargs)
 
     def pack(self, data, order=None):
         order = self.order or order or ''
